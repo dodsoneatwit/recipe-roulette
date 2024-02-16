@@ -1,0 +1,6 @@
+class AccountCloudDatabase {
+
+    constructor(){
+        
+    }
+}
