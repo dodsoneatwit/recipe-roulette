@@ -7,26 +7,37 @@ class Account extends User {
     
     mySettings = {
         user_name: username,
-        password: password,
-        email: email
-    }
+        password: password
+    };
+
+    email = '';
 
     /**
      * Initializes an official account for a given user
      * within the app
      * @constructor
      * @param {string} username 
-     * @param {string} password 
-     * @param {string} email 
-     * @param {string} id 
+     * @param {string} password
      */
-    constructor(username, password, email, id) {
-        super(username, password, email);
+    constructor(username, password, id) {
+        super(username, password);
         this.id = id
     }
 
-    logIntoAccount() {
+    getUserName() {
+        return this.username;
+    }
 
+    getPassword() {
+        return this.password;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    logIntoAccount() {
+        
     }
 
     addPreviouslyViewed() {
