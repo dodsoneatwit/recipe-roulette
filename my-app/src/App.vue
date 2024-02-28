@@ -9,13 +9,14 @@
           color="black"
           fixed-tabs
           align-tabs="center"
+
         >
-          <v-tab value="gallery">Gallery</v-tab>
-          <v-tab value="generate">Generate</v-tab>
+          <v-tab value="gallery" class="anta-regular">Gallery</v-tab>
+          <v-tab value="generate" class="anta-regular">Generate</v-tab>
         </v-tabs>
         <v-window v-model="tab">
           <template v-if="tab == 'gallery'">
-            <btn>Gallery</btn>
+            <Gallery />
           </template>
           <template v-if="tab == 'generate'">
             <Generation />
@@ -29,6 +30,8 @@
 <script>
 import NavigationBar from "./components/NavigationBar.vue";
 import Generation from "./components/Generation.vue";
+import Gallery from "./components/Gallery.vue";
+import Home from "./components/Home.vue";
 
 export default {
   name: "App",
@@ -37,6 +40,16 @@ export default {
   }),
   components: {
     NavigationBar,
-  },
+    Gallery,
+    Generation,
+    Home
+},
 };
 </script>
+<style scoped>
+.anta-regular {
+    font-family: "Anta", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+</style>
