@@ -3,12 +3,6 @@
     <v-toolbar color='red' dark>
       <v-row>
         <v-col cols="2">
-          <v-btn 
-           icon
-           @click="directToHomePage"
-          >
-            <v-icon class="icons">mdi-home</v-icon>
-          </v-btn>
         </v-col>
         <v-col class="d-flex justify-space-around">
           <v-toolbar-title class="flex text-center mt-3">
@@ -17,13 +11,31 @@
         </v-col>
         <v-col cols="2" class="d-flex justify-end">
           <v-btn 
-          icon
+           icon
+           @click.stop="openHamburgerButton = !openHamburgerButton"
           >
             <v-icon class="icons">mdi-menu</v-icon>
           </v-btn>
         </v-col>
       </v-row>
     </v-toolbar>
+    <v-navigation-drawer
+        v-model="openHamburgerButton"
+        temporary
+      >
+        <v-list-item>
+          <span class="accountTitle anta-regular">{{ accountName }}</span>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-account" value="profile">
+            <span class="drawer-titles anta-regular">Profile</span>
+          </v-list-item>
+          <v-list-item prepend-icon="mdi-square-edit-outline" value="custom-list">
+            <span class="drawer-titles anta-regular">Custom List</span>
+          </v-list-item>
+        </v-list>
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -32,7 +44,9 @@
 export default {
   name: 'NavigationBar',
   data: () => ({
-    title: 'Recipe Roulette'
+    title: 'Recipe Roulette',
+    accountName: 'Elijah Dodson',
+    openHamburgerButton: false
   }),
   components: {
   },
@@ -61,5 +75,15 @@ export default {
   
   .icons {
     font-size:xx-large
+  }
+
+  .accountTitle {
+    font-size:x-large;
+    font-weight: bolder;
+  }
+
+  .drawer-titles {
+    font-size: larger;
+    font-weight: bold;
   }
 </style>
