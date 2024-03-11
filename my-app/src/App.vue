@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-card>
+      <v-card v-if="isSignedIn">
         <NavigationBar />
         <v-tabs 
           v-model="tab" 
@@ -22,6 +22,10 @@
           </template>
         </v-window>
       </v-card>
+      <SignIn
+       v-if="!isSignedIn"
+       @send-sign-in-results="updateSignInValue($event)"
+      />
     </v-main>
   </v-app>
 </template>
@@ -30,17 +34,25 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import Generation from "./components/Generation.vue";
 import Gallery from "./components/Gallery.vue";
+import SignIn from "./components/SignIn.vue";
 
 export default {
   name: "App",
   data: () => ({
-    tab: null
+    tab: null,
+    isSignedIn: true
   }),
   components: {
     NavigationBar,
     Gallery,
-    Generation
-},
+    Generation,
+    SignIn
+  },
+  methods: {
+    updateSignInValue(value) {
+      this.isSignedIn = value;
+    }
+  }
 };
 </script>
 <style scoped>
