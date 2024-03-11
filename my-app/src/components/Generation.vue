@@ -27,6 +27,41 @@
 
                   <v-card-text class="mt-2 anta-regular">
                       {{ removeHtmlTags(recipes[randomNum].summary) }}
+                      <v-row :id="diet" class="diet">
+                          <div v-if="recipes[randomNum].vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
+                              <v-icon>
+                                  <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
+                                  <v-tooltip
+                                    activator="parent"
+                                    location="bottom"
+                                  >
+                                  Vegetarian
+                                  </v-tooltip>
+                              </v-icon>
+                          </div>
+                          <div v-if="recipes[randomNum].vegan" class="diet-icons">
+                              <v-icon>
+                                  <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
+                                  <v-tooltip
+                                    activator="parent"
+                                    location="bottom"
+                                  >
+                                  Vegan
+                                  </v-tooltip>
+                              </v-icon>
+                          </div>
+                          <div v-if="recipes[randomNum].glutenFree" class="diet-icons">
+                              <v-icon>
+                                  <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
+                                  <v-tooltip
+                                    activator="parent"
+                                    location="bottom"
+                                  >
+                                  Gluten Free
+                                  </v-tooltip>
+                              </v-icon>                                                
+                          </div>
+                      </v-row>
                   </v-card-text>
               </div>
           </v-expand-transition>
@@ -139,6 +174,13 @@
     }
     .prefetchedText {
       font-size: xx-large;
+    }
+    .diet-icons {
+        margin-left: 1rem;
+        margin: 1rem
+    }
+    .diet {
+        margin-top:1rem;
     }
     .recipe {
 
