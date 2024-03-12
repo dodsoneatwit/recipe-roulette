@@ -12,6 +12,7 @@
         >
           <v-tab value="generate" class="anta-regular">Generate</v-tab>
           <v-tab value="gallery" class="anta-regular">Gallery</v-tab>
+          <v-tab value="explore" class="anta-regular">Explore</v-tab>
         </v-tabs>
         <v-window v-model="tab">
           <template v-if="tab == 'gallery'">
@@ -19,6 +20,9 @@
           </template>
           <template v-if="tab == 'generate'">
             <Generation />
+          </template>
+          <template v-if="tab == 'explore'">
+            <Explore />
           </template>
         </v-window>
       </v-card>
@@ -34,18 +38,21 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import Generation from "./components/Generation.vue";
 import Gallery from "./components/Gallery.vue";
+import Explore from "./components/Explore.vue";
 import SignIn from "./components/SignIn.vue";
 
 export default {
   name: "App",
   data: () => ({
     tab: null,
-    isSignedIn: true
+    isSignedIn: true,
+    customList: []
   }),
   components: {
     NavigationBar,
     Gallery,
     Generation,
+    Explore,
     SignIn
   },
   methods: {

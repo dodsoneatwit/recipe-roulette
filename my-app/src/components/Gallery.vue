@@ -1,16 +1,6 @@
 <template>
     <v-card>
         <template v-slot:text>
-            <v-text-field
-                v-model="search"
-                label="Search"
-                prepend-inner-icon="mdi-magnify"
-                single-line
-                variant="outlined"
-                hide-details
-                class="search-bar"
-            >
-            </v-text-field>
             <div v-for="i in recipes.length/2" :key="i">
                 <v-row class="gallery-row">
                     <div v-for="j in 2" :key="j">
