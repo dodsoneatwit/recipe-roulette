@@ -12,15 +12,17 @@
             @click:append-inner="searchRecipeWithKey()"
         >
         </v-text-field>
-        <v-card>
+        <v-spacer/>
+        <v-card style="overflow: initial; z-index: initial">
             <template v-slot:text>
                 <div v-for="i in recipes.length/2" :key="i">
                     <v-row class="gallery-row">
-                        <div v-for="j in 2" :key="j">
+                        <div v-for="j in 4" :key="j">
                             <v-col>
-                                <v-card class="recipe" max-width="500" elevation="6">
-                                    <img :src="recipes[i * 2 + j].image" alt="Recipe Image">
-                                    <v-card-title class="mt-2 anta-regular title" > <b>{{ recipes[i * 2 + j].title }}</b></v-card-title>
+                                <v-card class="recipe"  elevation="6">
+                                    <img :src="recipes[i * 4 + j].image" :style="{ maxWidth: maxWidth +'px' }" alt="Recipe Image">
+                                    <v-card-title class="mt-2 anta-regular title" > <b>{{ recipes[i * 4 + j].title.substr(0,33) }}</b></v-card-title>
+                                    <v-card-title v-if="recipes[i * 4 + j].title.length >= 30" class="anta-regular title"><b>{{ recipes[i * 4 + j].title.substr(33) }}</b></v-card-title>
                                 </v-card>
                             </v-col>
                         </div>
@@ -40,7 +42,8 @@ export default {
         url: `https://api.spoonacular.com/recipes/complexSearch?`,
         apiKey: 'df1234e4fcad4177a07f6ba789141cd0',
         recipeCount: 100,
-        recipes: []
+        recipes: [],
+        maxWidth: 310
     }),
     methods: {
         searchRecipeWithKey() {
@@ -68,6 +71,22 @@ export default {
         },
         removeHtmlTags(text) {
             return text.replace(/<[^>]*>?/gm, '');
+        },
+        wrappedString(text) {
+            if (text.length <= 33) {
+                return text;
+            }
+
+            let wrappedParts = [];
+            let tempText = text;
+            while (tempText.length > 33) {
+                let subString = tempText.substr(0,33)
+                wrappedParts.push(subString)
+                tempText = tempText.substr(34)
+            }
+            wrappedParts.push(tempText)
+            return wrappedParts;
+            
         }
     }
 }
@@ -88,7 +107,7 @@ export default {
         font-style: normal;
     }
     .title {
-        font-size: large;
+        font-size: medium;
     }
     .gallery-row {
         display:flex;

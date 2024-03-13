@@ -13,7 +13,6 @@ declare module 'vue' {
     NavigationBar: typeof import('./src/components/NavigationBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Search: typeof import('./src/components/Explore.vue')['default']
     SignIn: typeof import('./src/components/SignIn.vue')['default']
   }
 }
