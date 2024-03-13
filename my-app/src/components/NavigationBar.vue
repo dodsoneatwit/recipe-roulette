@@ -28,10 +28,10 @@
         </v-list-item>
         <v-divider></v-divider>
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-account" value="profile">
+          <v-list-item @click="sendProfileClicked()" prepend-icon="mdi-account" value="profile">
             <span class="drawer-titles anta-regular">Profile</span>
           </v-list-item>
-          <v-list-item prepend-icon="mdi-square-edit-outline" value="custom-list">
+          <v-list-item @click="sendCustomListClicked()" prepend-icon="mdi-square-edit-outline" value="custom-list">
             <span class="drawer-titles anta-regular">Custom List</span>
           </v-list-item>
         </v-list>
@@ -48,13 +48,14 @@ export default {
     accountName: 'Elijah Dodson',
     openHamburgerButton: false
   }),
-  components: {
-  },
   created: function () {
   },
   methods: {
-    directToHomePage() {
-
+    sendProfileClicked() {
+      this.$emit('send-profile-clicked', true)
+    },
+    sendCustomListClicked() {
+      this.$emit('send-custom-list-clicked', true)
     }
   }
 }

@@ -1,8 +1,11 @@
 <template>
   <v-app>
     <v-main>
-      <v-card v-if="isSignedIn">
-        <NavigationBar />
+      <v-card v-if="isSignedIn && !profileClicked && !customListClicked">
+        <NavigationBar 
+          @send-profile-clicked="profileIsClicked($event)"
+          @send-custom-list-clicked="customListIsClicked($event)"
+        />
         <v-tabs 
           v-model="tab" 
           bg-color="red"
@@ -26,6 +29,14 @@
           </template>
         </v-window>
       </v-card>
+      <Profile
+        v-if="profileClicked"
+        @exit-profile="profileIsClicked($event)" 
+      />
+      <CustomList
+        v-if="customListClicked"
+        @exit-custom-list="customListIsClicked($event)" 
+      />
       <SignIn
        v-if="!isSignedIn"
        @send-sign-in-results="updateSignInValue($event)"
@@ -40,24 +51,36 @@ import Generation from "./components/Generation.vue";
 import Gallery from "./components/Gallery.vue";
 import Explore from "./components/Explore.vue";
 import SignIn from "./components/SignIn.vue";
+import Profile from "./components/Profile.vue"
+import CustomList from "./components/CustomList.vue"
 
 export default {
   name: "App",
   data: () => ({
     tab: null,
     isSignedIn: true,
-    customList: []
+    customList: [],
+    profileClicked: false,
+    customListClicked: false
   }),
   components: {
     NavigationBar,
     Gallery,
     Generation,
     Explore,
-    SignIn
+    SignIn,
+    Profile,
+    CustomList
   },
   methods: {
     updateSignInValue(value) {
       this.isSignedIn = value;
+    },
+    profileIsClicked(value) {
+      this.profileClicked = value;
+    },
+    customListIsClicked(value) {
+      this.customListClicked = value;
     }
   }
 };
