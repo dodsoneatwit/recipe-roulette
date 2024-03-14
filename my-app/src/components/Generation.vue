@@ -2,80 +2,100 @@
     <div class="container">
       <center>
         <v-card max-width="500" elevation="6" class="recipe">
-        <div v-if="!fetched">
-          <v-card-text class="text-center anta-regular prefetchedText">Press the "Generate" button to generate a random recipe</v-card-text>
-        </div>
-        <div v-if="fetched">
-          <center><img :src="recipes[randomNum].image" alt="Recipe Image"></center>
-          <v-card-title class="mt-2 anta-regular"> {{ recipes[randomNum].title }}</v-card-title>
-          <v-card-actions>
-              <v-card-subtitle class="mt-2 anta-regular">Description</v-card-subtitle>
-              <v-btn
-                  :icon="showDescription ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                  @click="showDescription = !showDescription"
-              ></v-btn>
-              <v-spacer/>
-              <v-card-subtitle class="mt-2 anta-regular" >Instructions</v-card-subtitle>
-              <v-btn
-                  :icon="showIngredients ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                  @click="showIngredients = !showIngredients"
-              ></v-btn>
-          </v-card-actions>
-          <v-expand-transition>
-              <div v-show="showDescription">
-                  <v-divider></v-divider>
+          <div v-if="!fetched">
+            <v-card-text class="text-center anta-regular prefetchedText">Press the "Generate" button to generate a random recipe</v-card-text>
+          </div>
+          <div v-if="fetched">
+            <center><img :src="recipes[randomNum].image" alt="Recipe Image"></center>
+            <v-row>
+              <v-col>
+                <v-card-title class="mt-2 anta-regular"> {{ recipes[randomNum].title }}</v-card-title>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-btn class="addToList" @click="addRecipeToList(recipes[randomNum])">
+                    Add To Custom List
+                    <v-icon class="">
+                      <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
+                        <v-tooltip
+                            activator="parent"
+                            location="bottom"
+                        >
+                            Press button to add recipe to your unique custom list
+                        </v-tooltip>
+                    </v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-card-actions>
+                <v-card-subtitle class="mt-2 anta-regular">Description</v-card-subtitle>
+                <v-btn
+                    :icon="showDescription ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                    @click="showDescription = !showDescription"
+                ></v-btn>
+                <v-spacer/>
+                <v-card-subtitle class="mt-2 anta-regular" >Instructions</v-card-subtitle>
+                <v-btn
+                    :icon="showIngredients ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                    @click="showIngredients = !showIngredients"
+                ></v-btn>
+            </v-card-actions>
+            <v-expand-transition>
+                <div v-show="showDescription">
+                    <v-divider></v-divider>
 
-                  <v-card-text class="mt-2 anta-regular">
-                      {{ removeHtmlTags(recipes[randomNum].summary) }}
-                      <v-row :id="diet" class="diet">
-                          <div v-if="recipes[randomNum].vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
-                              <v-icon>
-                                  <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
-                                  <v-tooltip
-                                    activator="parent"
-                                    location="bottom"
-                                  >
-                                  Vegetarian
-                                  </v-tooltip>
-                              </v-icon>
-                          </div>
-                          <div v-if="recipes[randomNum].vegan" class="diet-icons">
-                              <v-icon>
-                                  <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
-                                  <v-tooltip
-                                    activator="parent"
-                                    location="bottom"
-                                  >
-                                  Vegan
-                                  </v-tooltip>
-                              </v-icon>
-                          </div>
-                          <div v-if="recipes[randomNum].glutenFree" class="diet-icons">
-                              <v-icon>
-                                  <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
-                                  <v-tooltip
-                                    activator="parent"
-                                    location="bottom"
-                                  >
-                                  Gluten Free
-                                  </v-tooltip>
-                              </v-icon>                                                
-                          </div>
-                      </v-row>
-                  </v-card-text>
-              </div>
-          </v-expand-transition>
-          <v-expand-transition>
-              <div v-show="showIngredients">
-                  <v-divider></v-divider>
+                    <v-card-text class="mt-2 anta-regular">
+                        {{ removeHtmlTags(recipes[randomNum].summary) }}
+                        <v-row :id="diet" class="diet">
+                            <div v-if="recipes[randomNum].vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
+                                <v-icon>
+                                    <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
+                                    <v-tooltip
+                                      activator="parent"
+                                      location="bottom"
+                                    >
+                                    Vegetarian
+                                    </v-tooltip>
+                                </v-icon>
+                            </div>
+                            <div v-if="recipes[randomNum].vegan" class="diet-icons">
+                                <v-icon>
+                                    <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
+                                    <v-tooltip
+                                      activator="parent"
+                                      location="bottom"
+                                    >
+                                    Vegan
+                                    </v-tooltip>
+                                </v-icon>
+                            </div>
+                            <div v-if="recipes[randomNum].glutenFree" class="diet-icons">
+                                <v-icon>
+                                    <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
+                                    <v-tooltip
+                                      activator="parent"
+                                      location="bottom"
+                                    >
+                                    Gluten Free
+                                    </v-tooltip>
+                                </v-icon>                                                
+                            </div>
+                        </v-row>
+                    </v-card-text>
+                </div>
+            </v-expand-transition>
+            <v-expand-transition>
+                <div v-show="showIngredients">
+                    <v-divider></v-divider>
 
-                  <v-card-text class="mt-2 anta-regular" >
-                      {{ removeHtmlTags(recipes[randomNum].instructions) }}
-                  </v-card-text>
-              </div>
-          </v-expand-transition>
-        </div>
-      </v-card>
+                    <v-card-text class="mt-2 anta-regular" >
+                        {{ removeHtmlTags(recipes[randomNum].instructions) }}
+                    </v-card-text>
+                </div>
+            </v-expand-transition>
+          </div>
+        </v-card>
       </center>
         <v-slider
          v-model="range"
@@ -92,8 +112,8 @@
         />
         <center>
           <v-btn class="mt-2 anta-regular" @click="getRandomRecipe()">
-            {{ buttonTitle }}
-        </v-btn>
+              {{ buttonTitle }}
+          </v-btn>
         </center>
     </div>
   </template>
@@ -108,6 +128,7 @@
       maxGenerations: 4,
       fetched: false,
       recipes: [],
+      myList: [],
       randomNum: 0,
       showDescription: false,
       showIngredients: false
@@ -152,6 +173,18 @@
       },
       removeHtmlTags(text) {
         return text.replace(/<[^>]*>?/gm, '');
+      },
+      addRecipeToList(recipe){
+        let titles = this.myList.map((e) => e.title)
+        let found = false;
+        titles.forEach((title) => {
+          if (title === recipe.title) {
+            found = true;
+          }
+        })
+        if (!found) {
+          this.myList.push(recipe);
+        }
       }
     }
   }
@@ -182,8 +215,8 @@
     .diet {
         margin-top:1rem;
     }
-    .recipe {
-
+    .addToList {
+      margin-bottom:1rem
     }
   </style>
   

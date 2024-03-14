@@ -6,8 +6,26 @@
                     <div v-for="j in 2" :key="j">
                         <v-col>
                             <v-card class="recipe" max-width="500" elevation="6">
-                                <img :src="recipes[i * 2 + j].image" alt="Recipe Image">
-                                <v-card-title class="mt-2 anta-regular title" > <b>{{ recipes[i * 2 + j].title }}</b></v-card-title>
+                                <img :src="recipes[i * 2 + j]?.image" alt="Recipe Image">
+                                <v-row style="border-color: red;">
+                                    <v-col>
+                                        <v-card-title class="mt-2 anta-regular title"> <b>{{ recipes[i * 2 + j]?.title }}</b></v-card-title>
+                                    </v-col>
+                                </v-row>
+                                <v-row justify="center">
+                                    <v-btn size="small" class="addToList" @click="addRecipeToList(recipes[i * 2 + j])">
+                                        Add To Custom List
+                                        <v-icon class="">
+                                            <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
+                                            <v-tooltip
+                                                activator="parent"
+                                                location="bottom"
+                                            >
+                                                Press button to add recipe to your unique custom list
+                                            </v-tooltip>
+                                        </v-icon>
+                                    </v-btn>
+                                </v-row>
                                 <v-card-actions>
                                     <v-card-subtitle class="mt-2 anta-regular" >Description</v-card-subtitle>
                                     <v-btn
@@ -26,9 +44,9 @@
                                         <v-divider></v-divider>
 
                                         <v-card-text class="mt-2 anta-regular" >
-                                            {{ removeHtmlTags(recipes[i * 2 + j].summary) }}
-                                            <v-row :id="diet" class="diet">
-                                                <div v-if="recipes[i * 2 + j].vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
+                                            {{ removeHtmlTags(recipes[i * 2 + j]?.summary) }}
+                                            <v-row class="diet">
+                                                <div v-if="recipes[i * 2 + j]?.vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
                                                     <v-icon>
                                                         <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
                                                         <v-tooltip
@@ -39,7 +57,7 @@
                                                         </v-tooltip>
                                                     </v-icon>
                                                 </div>
-                                                <div v-if="recipes[i * 2 + j].vegan" class="diet-icons">
+                                                <div v-if="recipes[i * 2 + j]?.vegan" class="diet-icons">
                                                     <v-icon>
                                                         <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
                                                         <v-tooltip
@@ -50,7 +68,7 @@
                                                         </v-tooltip>
                                                     </v-icon>
                                                 </div>
-                                                <div v-if="recipes[i * 2 + j].glutenFree" class="diet-icons">
+                                                <div v-if="recipes[i * 2 + j]?.glutenFree" class="diet-icons">
                                                     <v-icon>
                                                         <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
                                                         <v-tooltip
@@ -71,7 +89,7 @@
                                         <v-divider></v-divider>
 
                                         <v-card-text class="mt-2 anta-regular" >
-                                            {{ removeHtmlTags(recipes[i * 2 + j].instructions) }}
+                                            {{ removeHtmlTags(recipes[i * 2 + j]?.instructions) }}
                                         </v-card-text>
                                     </div>
                                 </v-expand-transition>
@@ -90,6 +108,7 @@ export default {
     name: 'Gallery',
     data: () => ({
         recipes: [],
+        myList: [],
         showDescription: [],
         showIngredients: []
     }),
@@ -135,8 +154,20 @@ export default {
             
         },
         removeHtmlTags(text) {
-            return text.replace(/<[^>]*>?/gm, '');
+            return text?.replace(/<[^>]*>?/gm, '');
+        },
+        addRecipeToList(recipe){
+        let titles = this.myList.map((e) => e.title)
+        let found = false;
+        titles.forEach((title) => {
+          if (title === recipe.title) {
+            found = true;
+          }
+        })
+        if (!found) {
+          this.myList.push(recipe);
         }
+      }
     }
     
 }
@@ -167,5 +198,8 @@ export default {
 }
 .diet {
     margin-top:1rem;
+}
+.addToList {
+    margin-bottom:1rem
 }
 </style>
