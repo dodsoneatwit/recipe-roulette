@@ -1,22 +1,56 @@
-class Recipe{
+export default class Recipe{
 
     /**
      * Defines a single recipe
      * @constructor 
-     * @param {string} name - name of recipe
+     * @param {string} title - name of recipe
      * @param {string} id - recipe identification
-     * @param {list} ingredients - list of ingredients that make the dish
-     * @param {object} process - steps and difficulty of recipe
+     * @param {string} image - image url of recipe
+     * @param {string} instructions - list of ingredients that make the dish
+     * @param {string} description - steps and difficulty of recipe
      * @param {object} restrictions - dietary restrictions: vegan, spicy, gluten free, vegetarian
-     * @param {object} nutrition - additional nutritional facts for given recipe
      */
-    constructor(name, id, ingredients, process, restrictions, nutrition){
-        this.name = name;
+    constructor(title, id, imageUrl, instructions, description, restrictions){
+        this.title = title;
         this.id = id;
-        this.ingredients = ingredients;
-        this.process = process;
+        this.imageUrl = imageUrl
+        this.instructions = instructions;
+        this.description = description;
         this.restrictions = restrictions;
-        this.nutrition = nutrition;
+    }
+
+
+
+    getTitle() {
+        return this.title;
+    }
+
+    getID() {
+        return this.id
+    }
+
+    getImageUrl() {
+        return this.imageUrl
+    }
+
+    getInstructions() {
+        return this.instructions;
+    }
+
+    getDescription() {
+        return this.description
+    }
+
+    isVegan() {
+        return this.restrictions.vegan
+    }
+
+    isVegetarian() {
+        return this.restrictions.vegetarian
+    }
+
+    isGlutenFree() {
+        return this.restrictions.glutenFree
     }
 
 

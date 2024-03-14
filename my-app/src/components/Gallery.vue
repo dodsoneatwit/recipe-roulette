@@ -13,7 +13,7 @@
                                     </v-col>
                                 </v-row>
                                 <v-row justify="center">
-                                    <v-btn size="small" class="addToList" @click="addRecipeToList(recipes[i * 2 + j])">
+                                    <v-btn size="small" class="addToList" @click="updateMyRecipes(recipes[i * 2 + j])">
                                         Add To Custom List
                                         <v-icon class="">
                                             <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
@@ -104,11 +104,13 @@
 
 <script>
 
+import CustomUserList from '../lib/Classes/CustomUserList.js';
+
 export default {
     name: 'Gallery',
     data: () => ({
         recipes: [],
-        myList: [],
+        myList: new CustomUserList(),
         showDescription: [],
         showIngredients: []
     }),
@@ -156,18 +158,10 @@ export default {
         removeHtmlTags(text) {
             return text?.replace(/<[^>]*>?/gm, '');
         },
-        addRecipeToList(recipe){
-        let titles = this.myList.map((e) => e.title)
-        let found = false;
-        titles.forEach((title) => {
-          if (title === recipe.title) {
-            found = true;
-          }
-        })
-        if (!found) {
-          this.myList.push(recipe);
+        updateMyRecipes(recipe) {
+            this.myList.addRecipe(recipe)
+            this.$emit('update-my-custom-recipes', this.myList)
         }
-      }
     }
     
 }

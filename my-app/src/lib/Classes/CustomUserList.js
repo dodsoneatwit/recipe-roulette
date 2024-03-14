@@ -1,6 +1,7 @@
+import { raw } from 'body-parser';
 import Recipe from './Recipe'
 
-class CustomUserList {
+export default class CustomUserList {
 
     myRecipesList = [];
 
@@ -16,12 +17,35 @@ class CustomUserList {
         return this.myRecipesList.length()
     }
 
-    addRecipe(recipe) {
-        this.myRecipesList.push(recipe)
+    addRecipe(raw_recipe) {
+
+        let recipe = new Recipe(
+            raw_recipe.title,
+            raw_recipe.id,
+            raw_recipe.image,
+            raw_recipe.instructions,
+            raw_recipe.summary,
+            { 
+              vegan: raw_recipe.vegan,
+              vegetarian: raw_recipe.vegetarian,
+              glutenFree: raw_recipe.glutenFree
+            }
+        )
+
+        let titles = this.myRecipesList.map((e) => e.getTitle())
+        let found = false;
+        titles.forEach((title) => {
+            if (title === recipe.getTitle()) {
+                found = true;
+            }
+        })
+        if (!found) {
+            this.myRecipesList.push(recipe);
+        }
     }
 
     removeRecipe(recipe) {
-        this.myRecipesList = this.myRecipesList.filter((e) => e.name !== recipe.name)
+        this.myRecipesList = this.myRecipesList.filter((e) => e.title !== recipe.title)
     }
 
     getRecipesList() {

@@ -6,7 +6,7 @@
             <v-card-text class="text-center anta-regular prefetchedText">Press the "Generate" button to generate a random recipe</v-card-text>
           </div>
           <div v-if="fetched">
-            <center><img :src="recipes[randomNum].image" alt="Recipe Image"></center>
+            <center><img :src="recipes[randomNum]?.image" alt="Recipe Image"></center>
             <v-row>
               <v-col>
                 <v-card-title class="mt-2 anta-regular"> {{ recipes[randomNum].title }}</v-card-title>

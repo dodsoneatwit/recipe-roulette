@@ -1,8 +1,8 @@
 import Account from './Account';
 
-const jsforce = require('jsforce');
 
-class AccountCloudDatabase {
+
+export default class AccountCloudDatabase {
 
     constructor(){
         

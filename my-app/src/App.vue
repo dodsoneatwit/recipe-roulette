@@ -19,7 +19,9 @@
         </v-tabs>
         <v-window v-model="tab">
           <template v-if="tab == 'gallery'">
-            <Gallery />
+            <Gallery 
+              @update-my-custom-recipes="updateMyCustomList($event)"
+            />
           </template>
           <template v-if="tab == 'generate'">
             <Generation />
@@ -35,6 +37,7 @@
       />
       <CustomList
         v-if="customListClicked"
+        :custom-list="customList"
         @exit-custom-list="customListIsClicked($event)" 
       />
       <SignIn
@@ -81,6 +84,9 @@ export default {
     },
     customListIsClicked(value) {
       this.customListClicked = value;
+    },
+    updateMyCustomList(updatedList) {
+      this.customList = updatedList
     }
   }
 };

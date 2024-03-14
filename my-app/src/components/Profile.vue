@@ -3,17 +3,15 @@
         <v-app-bar :elevation="2">
             <h1 class="text-center title"> Profile </h1>
             <template v-slot:append>
-                <v-btn>
-                    <v-icon class="exit" @click="exitProfile()">
-                        <i class="fa-solid fa-circle-xmark fa-2xl" style="color: #ee3a3a;"></i>
-                        <v-tooltip
-                            activator="parent"
-                            location="bottom"
-                        >
-                            Exit Profile
-                        </v-tooltip>
-                    </v-icon>
-                </v-btn>
+                <v-icon class="exit" @click="exitProfile()">
+                    <i class="fa-solid fa-circle-xmark fa-2xl exit" style="color: #ee3a3a;"></i>
+                    <v-tooltip
+                        activator="parent"
+                        location="bottom"
+                    >
+                        Exit Profile
+                    </v-tooltip>
+                </v-icon>
             </template>
         </v-app-bar>
         <v-row>
@@ -56,10 +54,10 @@ export default {
     background-color: lightgreen
 }
 .exit {
-    left: 115%;
-    margin-top:0
+    margin-top:0;
+    margin-right:1rem
 }
 .title {
-    font-size: 2.5rem
+    font-size: 2rem
 }
 </style>
