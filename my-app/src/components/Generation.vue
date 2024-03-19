@@ -9,7 +9,9 @@
             <center><img :src="recipes[randomNum]?.image" alt="Recipe Image"></center>
             <v-row>
               <v-col>
-                <v-card-title class="mt-2 anta-regular"> {{ recipes[randomNum].title }}</v-card-title>
+                <v-card-title class="mt-2 anta-regular"> 
+                  {{ recipes[randomNum]?.title !== undefined && recipes[randomNum]?.title !== null ? recipes[randomNum]?.title : '' }}
+                </v-card-title>
               </v-col>
             </v-row>
             <v-row>
@@ -42,7 +44,7 @@
                 ></v-btn>
             </v-card-actions>
             <v-expand-transition>
-                <div v-show="showDescription">
+                <div v-if="showDescription">
                     <v-divider></v-divider>
 
                     <v-card-text class="mt-2 anta-regular">
@@ -86,7 +88,7 @@
                 </div>
             </v-expand-transition>
             <v-expand-transition>
-                <div v-show="showIngredients">
+                <div v-if="showIngredients">
                     <v-divider></v-divider>
 
                     <v-card-text class="mt-2 anta-regular" >
@@ -119,7 +121,6 @@
   </template>
   
   <script>
-  
   export default {
     name: 'Generation',
     data: () => ({
@@ -139,33 +140,31 @@
       this.retrieveRecipesInBulk();
     },
     methods: {
-      retrieveRecipesInBulk() {
-            fetch('http://localhost:8080/getRecipesFromBulk', {
+      async retrieveRecipesInBulk() {
+        try {
+          const response = await fetch('http://localhost:8080/getRecipesFromBulk', {
                 method: 'GET',
                 headers: {
                     'If-Modified-Since': 'YourLastModifiedTime'
                 }
             })
-            .then(response =>{
                 if (response.status === 304) {
-
-                } else if (response.ok) {
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        return response.json(); // Parse JSON response
-                    } else {
-                        return response.text(); // Return plain text response
-                    }
+                // Handle not modified response
+            } else if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const result = await response.json(); // Parse JSON response
+                    this.recipes = result.recipes; // Update component data
                 } else {
-                    throw new Error(`Failed to retrieve response data: ${response.status}`)
+                    const result = await response.text(); // Parse plain text response
+                    // Handle text response
                 }
-            })
-            .then((result) => {
-                this.recipes = result.recipes;
-            })
-            .catch((error) => {
-                console.log('Failed to retrieve recipes: ', error)
-            })
+            } else {
+                throw new Error(`Failed to retrieve response data: ${response.status}`);
+            }
+        } catch (error) {
+          console.log('Failed to retrieve recipes: ', error)
+        }
       },
       getRandomRecipe() {
         this.randomNum = Math.floor(Math.random() * this.recipes.length);
