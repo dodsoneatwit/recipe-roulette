@@ -37,7 +37,7 @@
       />
       <CustomList
         v-if="customListClicked"
-        :custom-list="customList"
+        :custom-list="myList"
         @exit-custom-list="customListIsClicked($event)" 
       />
       <SignIn
@@ -62,7 +62,7 @@ export default {
   data: () => ({
     tab: null,
     isSignedIn: true,
-    customList: [],
+    myList: [],
     profileClicked: false,
     customListClicked: false
   }),
@@ -86,7 +86,7 @@ export default {
       this.customListClicked = value;
     },
     updateMyCustomList(updatedList) {
-      this.customList = updatedList
+      this.myList = updatedList
     }
   }
 };

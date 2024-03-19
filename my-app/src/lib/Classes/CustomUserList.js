@@ -14,7 +14,7 @@ export default class CustomUserList {
 
     
     getNumberOfRecipes() {
-        return this.myRecipesList.length()
+        return this.myRecipesList.length
     }
 
     addRecipe(raw_recipe) {

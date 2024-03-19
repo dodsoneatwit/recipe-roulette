@@ -14,116 +14,124 @@
                 </v-icon>
             </template>
         </v-app-bar>
-        <div v-for="i in customList.getNumberOfRecipes()/2" :key="i">
-            <v-row class="gallery-row">
-                <div v-for="j in 2" :key="j">
-                    <v-col>
-                        <v-card class="recipe" max-width="500" elevation="6">
-                            <img :src="customList.getRecipesList()[i * 2 + j]?.getImageUrl()" alt="Recipe Image">
-                            <v-row style="border-color: red;">
-                                <v-col>
-                                    <v-card-title class="mt-2 anta-regular title"> <b>{{ customList.getRecipesList()[i * 2 + j]?.getTitle() }}</b></v-card-title>
-                                </v-col>
-                            </v-row>
-                            <v-row justify="center">
-                                <v-btn size="small" class="addToList" @click="updateMyRecipes(customList.getRecipesList()[i * 2 + j])">
-                                    Add To Custom List
-                                    <v-icon class="">
-                                        <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
-                                        <v-tooltip
-                                            activator="parent"
-                                            location="bottom"
-                                        >
-                                            Press button to add recipe to your unique custom list
-                                        </v-tooltip>
-                                    </v-icon>
-                                </v-btn>
-                            </v-row>
-                            <v-card-actions>
-                                <v-card-subtitle class="mt-2 anta-regular" >Description</v-card-subtitle>
-                                <v-btn
-                                    :icon="showDescription[i * 2 + j] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                                    @click="showDescription[i * 2 + j] = !showDescription[i * 2 + j]"
+        <div v-if="customList.length !== 0">
+            <div v-for="i in customList.getNumberOfRecipes()/2" :key="i">
+                <v-row class="gallery-row">
+                    <div v-for="j in 2" :key="j">
+                        <v-col>
+                            <v-card class="recipe" max-width="500" elevation="6">
+                                <img :src="customList.getRecipesList()[i * 2 + j]?.getImageUrl()" alt="Recipe Image">
+                                <v-row style="border-color: red;">
+                                    <v-col>
+                                        <v-card-title class="mt-2 anta-regular title"> <b>{{ customList.getRecipesList()[i * 2 + j]?.getTitle() }}</b></v-card-title>
+                                    </v-col>
+                                </v-row>
+                                <v-row justify="center">
+                                    <v-btn size="small" class="addToList" @click="updateMyRecipes(customList.getRecipesList()[i * 2 + j])">
+                                        Add To Custom List
+                                        <v-icon class="">
+                                            <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
+                                            <v-tooltip
+                                                activator="parent"
+                                                location="bottom"
+                                            >
+                                                Press button to add recipe to your unique custom list
+                                            </v-tooltip>
+                                        </v-icon>
+                                    </v-btn>
+                                </v-row>
+                                <v-card-actions>
+                                    <v-card-subtitle class="mt-2 anta-regular" >Description</v-card-subtitle>
+                                    <v-btn
+                                        :icon="showDescription[i * 2 + j] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                                        @click="showDescription[i * 2 + j] = !showDescription[i * 2 + j]"
+                                    ></v-btn>
+                                    <v-spacer/>
+                                    <v-card-subtitle class="mt-2 anta-regular" >Instructions</v-card-subtitle>
+                                    <v-btn
+                                    :icon="showIngredients[i * 2 + j] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                                    @click="showIngredients[i * 2 + j] = !showIngredients[i * 2 + j]"
                                 ></v-btn>
-                                <v-spacer/>
-                                <v-card-subtitle class="mt-2 anta-regular" >Instructions</v-card-subtitle>
-                                <v-btn
-                                :icon="showIngredients[i * 2 + j] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                                @click="showIngredients[i * 2 + j] = !showIngredients[i * 2 + j]"
-                            ></v-btn>
-                            </v-card-actions>
-                            <v-expand-transition>
-                                <div v-show="showDescription[i * 2 + j]">
-                                    <v-divider></v-divider>
+                                </v-card-actions>
+                                <v-expand-transition>
+                                    <div v-show="showDescription[i * 2 + j]">
+                                        <v-divider></v-divider>
 
-                                    <v-card-text class="mt-2 anta-regular" >
-                                        {{ removeHtmlTags(customList.getRecipesList()[i * 2 + j]?.getDescription()) }}
-                                        <v-row class="diet">
-                                            <div v-if="customList.getRecipesList()[i * 2 + j].isVegetarian()" class="diet-icons" v:on:mouseover="showVegetarian">
-                                                <v-icon>
-                                                    <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
-                                                    <v-tooltip
-                                                        activator="parent"
-                                                        location="bottom"
-                                                    >
-                                                    Vegetarian
-                                                    </v-tooltip>
-                                                </v-icon>
-                                            </div>
-                                            <div v-if="customList[i * 2 + j].isVegan()" class="diet-icons">
-                                                <v-icon>
-                                                    <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
-                                                    <v-tooltip
-                                                        activator="parent"
-                                                        location="bottom"
-                                                    >
-                                                    Vegan
-                                                    </v-tooltip>
-                                                </v-icon>
-                                            </div>
-                                            <div v-if="customList.getRecipesList()[i * 2 + j].isGlutenFree()" class="diet-icons">
-                                                <v-icon>
-                                                    <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
-                                                    <v-tooltip
-                                                        activator="parent"
-                                                        location="bottom"
-                                                    >
-                                                    Gluten Free
-                                                    </v-tooltip>
-                                                </v-icon>                                                
-                                            </div>
-                                        </v-row>
+                                        <v-card-text class="mt-2 anta-regular" >
+                                            {{ removeHtmlTags(customList.getRecipesList()[i * 2 + j]?.getDescription()) }}
+                                            <v-row class="diet">
+                                                <div v-if="customList.getRecipesList()[i * 2 + j]?.isVegetarian()" class="diet-icons" v:on:mouseover="showVegetarian">
+                                                    <v-icon>
+                                                        <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
+                                                        <v-tooltip
+                                                            activator="parent"
+                                                            location="bottom"
+                                                        >
+                                                        Vegetarian
+                                                        </v-tooltip>
+                                                    </v-icon>
+                                                </div>
+                                                <div v-if="customList[i * 2 + j]?.isVegan()" class="diet-icons">
+                                                    <v-icon>
+                                                        <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
+                                                        <v-tooltip
+                                                            activator="parent"
+                                                            location="bottom"
+                                                        >
+                                                        Vegan
+                                                        </v-tooltip>
+                                                    </v-icon>
+                                                </div>
+                                                <div v-if="customList.getRecipesList()[i * 2 + j]?.isGlutenFree()" class="diet-icons">
+                                                    <v-icon>
+                                                        <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
+                                                        <v-tooltip
+                                                            activator="parent"
+                                                            location="bottom"
+                                                        >
+                                                        Gluten Free
+                                                        </v-tooltip>
+                                                    </v-icon>                                                
+                                                </div>
+                                            </v-row>
 
-                                    </v-card-text>
-                                </div>
-                            </v-expand-transition>
-                            <v-expand-transition>
-                                <div v-show="showIngredients[i * 2 + j]">
-                                    <v-divider></v-divider>
+                                        </v-card-text>
+                                    </div>
+                                </v-expand-transition>
+                                <v-expand-transition>
+                                    <div v-show="showIngredients[i * 2 + j]">
+                                        <v-divider></v-divider>
 
-                                    <v-card-text class="mt-2 anta-regular" >
-                                        {{ removeHtmlTags(customList.getRecipesList()[i * 2 + j].getInstructions()) }}
-                                    </v-card-text>
-                                </div>
-                            </v-expand-transition>
-                        </v-card>
-                    </v-col>
-                </div>
-            </v-row>
+                                        <v-card-text class="mt-2 anta-regular" >
+                                            {{ removeHtmlTags(customList.getRecipesList()[i * 2 + j]?.getInstructions()) }}
+                                        </v-card-text>
+                                    </div>
+                                </v-expand-transition>
+                            </v-card>
+                        </v-col>
+                    </div>
+                </v-row>
+            </div>
         </div>
-    </div>
+        </div>
 </template>
 <script>
 export default {
     name: 'CustomList',
     data: () => ({
         showDescription: [],
-        showIngredients: []
+        showIngredients: [],
+        temp: 'Not Yet',
+        tempList: []
     }),
     props: {
         customList: {
             type: Array
         }
+    },
+    mounted() {
+        // Setting data value to the value of the prop
+        this.tempList = this.propValue;
     },
     methods: {
         exitCustomList() {
