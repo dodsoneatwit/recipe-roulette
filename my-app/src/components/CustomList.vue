@@ -14,31 +14,17 @@
                 </v-icon>
             </template>
         </v-app-bar>
-        <div v-if="customList.length !== 0">
+        <div v-if="customList !== undefined && customList != [] ">
             <div v-for="i in customList.getNumberOfRecipes()/2" :key="i">
                 <v-row class="gallery-row">
                     <div v-for="j in 2" :key="j">
                         <v-col>
                             <v-card class="recipe" max-width="500" elevation="6">
-                                <img :src="customList.getRecipesList()[i * 2 + j]?.getImageUrl()" alt="Recipe Image">
+                                <img :src="customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.getImageUrl()" alt="Recipe Image">
                                 <v-row style="border-color: red;">
                                     <v-col>
-                                        <v-card-title class="mt-2 anta-regular title"> <b>{{ customList.getRecipesList()[i * 2 + j]?.getTitle() }}</b></v-card-title>
+                                        <v-card-title class="mt-2 anta-regular title"> <b>{{ customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.getTitle() }}</b></v-card-title>
                                     </v-col>
-                                </v-row>
-                                <v-row justify="center">
-                                    <v-btn size="small" class="addToList" @click="updateMyRecipes(customList.getRecipesList()[i * 2 + j])">
-                                        Add To Custom List
-                                        <v-icon class="">
-                                            <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
-                                            <v-tooltip
-                                                activator="parent"
-                                                location="bottom"
-                                            >
-                                                Press button to add recipe to your unique custom list
-                                            </v-tooltip>
-                                        </v-icon>
-                                    </v-btn>
                                 </v-row>
                                 <v-card-actions>
                                     <v-card-subtitle class="mt-2 anta-regular" >Description</v-card-subtitle>
@@ -58,9 +44,9 @@
                                         <v-divider></v-divider>
 
                                         <v-card-text class="mt-2 anta-regular" >
-                                            {{ removeHtmlTags(customList.getRecipesList()[i * 2 + j]?.getDescription()) }}
+                                            {{ removeHtmlTags(customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.getDescription()) }}
                                             <v-row class="diet">
-                                                <div v-if="customList.getRecipesList()[i * 2 + j]?.isVegetarian()" class="diet-icons" v:on:mouseover="showVegetarian">
+                                                <div v-if="customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.isVegetarian()" class="diet-icons" v:on:mouseover="showVegetarian">
                                                     <v-icon>
                                                         <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
                                                         <v-tooltip
@@ -71,7 +57,7 @@
                                                         </v-tooltip>
                                                     </v-icon>
                                                 </div>
-                                                <div v-if="customList[i * 2 + j]?.isVegan()" class="diet-icons">
+                                                <div v-if="customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.isVegan()" class="diet-icons">
                                                     <v-icon>
                                                         <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
                                                         <v-tooltip
@@ -82,7 +68,7 @@
                                                         </v-tooltip>
                                                     </v-icon>
                                                 </div>
-                                                <div v-if="customList.getRecipesList()[i * 2 + j]?.isGlutenFree()" class="diet-icons">
+                                                <div v-if="customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.isGlutenFree()" class="diet-icons">
                                                     <v-icon>
                                                         <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
                                                         <v-tooltip
@@ -103,7 +89,7 @@
                                         <v-divider></v-divider>
 
                                         <v-card-text class="mt-2 anta-regular" >
-                                            {{ removeHtmlTags(customList.getRecipesList()[i * 2 + j]?.getInstructions()) }}
+                                            {{ removeHtmlTags(customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.getInstructions()) }}
                                         </v-card-text>
                                     </div>
                                 </v-expand-transition>
@@ -126,7 +112,7 @@ export default {
     }),
     props: {
         customList: {
-            type: Array
+            type: Object
         }
     },
     mounted() {
@@ -137,17 +123,9 @@ export default {
         exitCustomList() {
             this.$emit('exit-custom-list', false)
         },
-        fillShow() {
-            let length = this.customList.getNumberOfRecipes()
-            for (let i = 0; i < length; i++) {
-                this.showDescription[i] = false;
-                this.showIngredients[i] = false;
-            }
-            
-        },
         removeHtmlTags(text) {
             return text?.replace(/<[^>]*>?/gm, '');
-        },
+        }
     }
 }
 </script>
@@ -163,6 +141,6 @@ export default {
     margin-right:1rem
 }
 .title {
-    font-size: 2rem
+    font-size: 1rem
 }
 </style>

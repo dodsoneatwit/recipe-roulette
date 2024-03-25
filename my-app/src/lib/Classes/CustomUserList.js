@@ -52,6 +52,10 @@ export default class CustomUserList {
         return this.myRecipesList
     }
 
+    getRecipeAtIndex(index) {
+        return this.myRecipesList[index]
+    }
+
     sort() {
         this.myRecipesList.sort((curr, next) => {
             return curr.name < next.name ? -1 :

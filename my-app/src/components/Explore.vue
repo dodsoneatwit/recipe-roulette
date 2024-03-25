@@ -20,9 +20,9 @@
                         <div v-for="j in 4" :key="j">
                             <v-col>
                                 <v-card class="recipe"  elevation="6">
-                                    <img :src="recipes[i * 4 + j].image" :style="{ maxWidth: maxWidth +'px' }" alt="Recipe Image">
-                                    <v-card-title class="mt-2 anta-regular title" > <b>{{ recipes[i * 4 + j].title.substr(0,33) }}</b></v-card-title>
-                                    <v-card-title v-if="recipes[i * 4 + j].title.length >= 30" class="anta-regular title"><b>{{ recipes[i * 4 + j].title.substr(33) }}</b></v-card-title>
+                                    <img :src="recipes[i * 4 + j]?.image" :style="{ maxWidth: maxWidth +'px' }" alt="Recipe Image">
+                                    <v-card-title class="mt-2 anta-regular title" > <b>{{ recipes[i * 4 + j]?.title.substr(0,33) }}</b></v-card-title>
+                                    <v-card-title v-if="recipes[i * 4 + j]?.title.length >= 30" class="anta-regular title"><b>{{ recipes[i * 4 + j]?.title.substr(33) }}</b></v-card-title>
                                 </v-card>
                             </v-col>
                         </div>

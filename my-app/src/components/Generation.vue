@@ -171,7 +171,7 @@
         this.fetched = true
       },
       removeHtmlTags(text) {
-        return text.replace(/<[^>]*>?/gm, '');
+        return text?.replace(/<[^>]*>?/gm, '');
       },
       addRecipeToList(recipe){
         let titles = this.myList.map((e) => e.title)
