@@ -24,7 +24,9 @@
             />
           </template>
           <template v-if="tab == 'generate'">
-            <Generation />
+            <Generation 
+              @update-my-custom-recipes="updateMyCustomList($event)"
+            />
           </template>
           <template v-if="tab == 'explore'">
             <Explore />

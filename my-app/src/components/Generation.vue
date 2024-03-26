@@ -2,9 +2,6 @@
     <div class="container">
       <center>
         <v-card max-width="500" elevation="6" class="recipe">
-          <div v-if="!fetched">
-            <v-card-text class="text-center anta-regular prefetchedText">Press the "Generate" button to generate a random recipe</v-card-text>
-          </div>
           <div v-if="fetched">
             <center><img :src="recipes[randomNum]?.image" alt="Recipe Image"></center>
             <v-row>
@@ -16,7 +13,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn class="addToList" @click="addRecipeToList(recipes[randomNum])">
+                <v-btn class="addToList" @click="updateMyRecipes(recipes[randomNum])">
                     Add To Custom List
                     <v-icon class="">
                       <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
@@ -121,6 +118,9 @@
   </template>
   
   <script>
+import CustomList from './CustomList.vue';
+import CustomUserList from '../lib/Classes/CustomUserList'
+
   export default {
     name: 'Generation',
     data: () => ({
@@ -129,7 +129,7 @@
       maxGenerations: 4,
       fetched: false,
       recipes: [],
-      myList: [],
+      myList: new CustomUserList(),
       randomNum: 0,
       showDescription: false,
       showIngredients: false
@@ -155,6 +155,7 @@
                 if (contentType && contentType.includes('application/json')) {
                     const result = await response.json(); // Parse JSON response
                     this.recipes = result.recipes; // Update component data
+                    this.fetched = true;
                 } else {
                     const result = await response.text(); // Parse plain text response
                     // Handle text response
@@ -173,18 +174,10 @@
       removeHtmlTags(text) {
         return text?.replace(/<[^>]*>?/gm, '');
       },
-      addRecipeToList(recipe){
-        let titles = this.myList.map((e) => e.title)
-        let found = false;
-        titles.forEach((title) => {
-          if (title === recipe.title) {
-            found = true;
-          }
-        })
-        if (!found) {
-          this.myList.push(recipe);
+      updateMyRecipes(recipe) {
+            this.myList.addRecipe(recipe)
+            this.$emit('update-my-custom-recipes', this.myList)
         }
-      }
     }
   }
   //

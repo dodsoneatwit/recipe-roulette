@@ -10,6 +10,7 @@
             class="search-bar"
             clearable
             @click:append-inner="searchRecipeWithKey()"
+            @keydown.enter="searchRecipeWithKey()"
         >
         </v-text-field>
         <v-spacer/>
