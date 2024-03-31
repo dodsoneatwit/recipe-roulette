@@ -14,7 +14,7 @@
                 </v-icon>
             </template>
         </v-app-bar>
-        <div v-if="customList !== undefined && customList != [] ">
+        <div v-if="customList !== undefined && customList.length > 0">
             <div v-for="i in customList.getNumberOfRecipes()/2" :key="i">
                 <v-row class="gallery-row">
                     <div v-for="j in 2" :key="j">
@@ -102,24 +102,87 @@
         </div>
 </template>
 <script>
+import Account from './../lib/Classes/Account'
+import CustomUserList from '@/lib/Classes/CustomUserList';
 export default {
     name: 'CustomList',
     data: () => ({
         showDescription: [],
         showIngredients: [],
         temp: 'Not Yet',
-        tempList: []
+        customList: new CustomUserList(),
+        url: `https://api.spoonacular.com/recipes/`,
+        apiKey: 'df1234e4fcad4177a07f6ba789141cd0',
     }),
     props: {
-        customList: {
-            type: Object
+        username: {
+            type: String
+        },
+        password: {
+            type: String
         }
+    },
+    created: function() {
+        this.initializeCustomlist()
     },
     mounted() {
         // Setting data value to the value of the prop
         this.tempList = this.propValue;
     },
     methods: {
+        async initializeCustomlist() {
+            const account = await this.getAccountDetails();
+            console.log('Account: ' + account)
+            //https://api.spoonacular.com/recipes/{id}/information
+            account.getRecipeIds().forEach((id) => {
+                fetch (this.url + `${id}/information?apiKey=${this.apiKey}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Error searching for recipe')
+                    }
+                    return response.json();
+                })
+                .then((recipe) => {
+                    this.customList.addRecipe(recipe);
+                    console.log('CustomList: ' + this.customList.getRecipesList())
+                    console.log('Recipe: ' + recipe)
+                })
+                .catch((error) => {
+                    console.log('Error fetching search recipes from spoonacular')
+                })
+            })
+            console.log('My List: ' + this.customList.getRecipesList())
+        },
+        async getAccountDetails() {
+            try {
+
+                let response = await fetch(`http://localhost:8080/getuserAccount?param1=${this.username}&param2=${this.password}`, {
+                    method: 'GET',
+                    headers: {
+                        'If-Modified-Since': 'YourLastModifiedTime'
+                    }
+                });
+                let data = ''
+                if (response.status === 304) {
+
+                } else if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        data = await response.json(); // Parse JSON response
+                    } else {
+                        data = await response.text(); // Return plain text response
+                    }
+                } else {
+                    throw new Error(`Failed to retrieve response data: ${response.status}`)
+                }
+                let account = new Account(data.Name, data.Password__c, data.Id, data.RecipeIds__c == null ? [] : data.RecipeIds__c.split('\n'))
+                console.log('Recipe Ids: ' + account.getRecipeIds())
+                return account;
+
+            } catch(error) {
+                console.error('Error occurred while fetching account details: ' + error)
+            }
+        },
         exitCustomList() {
             this.$emit('exit-custom-list', false)
         },

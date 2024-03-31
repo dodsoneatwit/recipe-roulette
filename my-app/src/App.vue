@@ -5,6 +5,7 @@
         <NavigationBar 
           @send-profile-clicked="profileIsClicked($event)"
           @send-custom-list-clicked="customListIsClicked($event)"
+          :my-account="account"
         />
         <v-tabs 
           v-model="tab" 
@@ -26,6 +27,7 @@
           <template v-if="tab == 'generate'">
             <Generation 
               @update-my-custom-recipes="updateMyCustomList($event)"
+              :my-account="account"
             />
           </template>
           <template v-if="tab == 'explore'">
@@ -40,6 +42,8 @@
       <CustomList
         v-if="customListClicked"
         :custom-list="myList"
+        :username="account.getUserName()"
+        :password="account.getPassword()"
         @exit-custom-list="customListIsClicked($event)" 
       />
       <SignIn
@@ -62,8 +66,9 @@ import CustomList from "./components/CustomList.vue"
 export default {
   name: "App",
   data: () => ({
+    account: null,
     tab: null,
-    isSignedIn: true,
+    isSignedIn: null,
     myList: [],
     profileClicked: false,
     customListClicked: false
@@ -79,7 +84,8 @@ export default {
   },
   methods: {
     updateSignInValue(value) {
-      this.isSignedIn = value;
+      this.isSignedIn = value.validLogin;
+      this.account = value.account;
     },
     profileIsClicked(value) {
       this.profileClicked = value;

@@ -3,17 +3,17 @@
       <center>
         <v-card max-width="500" elevation="6" class="recipe">
           <div v-if="fetched">
-            <center><img :src="recipes[randomNum]?.image" alt="Recipe Image"></center>
+            <center><img :src="chosenRecipe?.image" alt="Recipe Image"></center>
             <v-row>
               <v-col>
                 <v-card-title class="mt-2 anta-regular"> 
-                  {{ recipes[randomNum]?.title !== undefined && recipes[randomNum]?.title !== null ? recipes[randomNum]?.title : '' }}
+                  {{ chosenRecipe?.title !== undefined && chosenRecipe?.title !== null ? chosenRecipe?.title : '' }}
                 </v-card-title>
               </v-col>
             </v-row>
             <v-row>
               <v-col>
-                <v-btn class="addToList" @click="updateMyRecipes(recipes[randomNum])">
+                <v-btn class="addToList" @click="updateMyRecipes(chosenRecipe)">
                     Add To Custom List
                     <v-icon class="">
                       <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
@@ -45,9 +45,9 @@
                     <v-divider></v-divider>
 
                     <v-card-text class="mt-2 anta-regular">
-                        {{ removeHtmlTags(recipes[randomNum].summary) }}
+                        {{ removeHtmlTags(chosenRecipe?.summary) }}
                         <v-row :id="diet" class="diet">
-                            <div v-if="recipes[randomNum].vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
+                            <div v-if="chosenRecipe?.vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
                                 <v-icon>
                                     <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
                                     <v-tooltip
@@ -58,18 +58,18 @@
                                     </v-tooltip>
                                 </v-icon>
                             </div>
-                            <div v-if="recipes[randomNum].vegan" class="diet-icons">
+                            <div v-if="chosenRecipe?.vegan" class="diet-icons">
                                 <v-icon>
                                     <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
                                     <v-tooltip
                                       activator="parent"
                                       location="bottom"
                                     >
-                                    Vegan
+                                    Veganinstruction
                                     </v-tooltip>
                                 </v-icon>
                             </div>
-                            <div v-if="recipes[randomNum].glutenFree" class="diet-icons">
+                            <div v-if="chosenRecipe?.glutenFree" class="diet-icons">
                                 <v-icon>
                                     <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
                                     <v-tooltip
@@ -89,7 +89,7 @@
                     <v-divider></v-divider>
 
                     <v-card-text class="mt-2 anta-regular" >
-                        {{ removeHtmlTags(recipes[randomNum].instructions) }}
+                        {{ removeHtmlTags(chosenRecipe?.instructions) }}
                     </v-card-text>
                 </div>
             </v-expand-transition>
@@ -111,29 +111,46 @@
         />
         <center>
           <v-btn class="mt-2 anta-regular" @click="getRandomRecipe()">
-              {{ buttonTitle }}
+              {{ generateBtn }}
           </v-btn>
         </center>
+        <div v-if="itemsAdded > 0">
+          <center>
+          <v-btn class="mt-2 anta-regular" @click="updateAccount()">
+              {{ saveBtn }}
+          </v-btn>
+        </center>
+        </div>
     </div>
   </template>
   
   <script>
-import CustomList from './CustomList.vue';
 import CustomUserList from '../lib/Classes/CustomUserList'
+import Generate from '../lib/Classes/Generate'
 
   export default {
     name: 'Generation',
     data: () => ({
-      buttonTitle: 'Generate',
+      username: 'EliDodson',
+      password: 'Elijah85',
+      itemsAdded: 0,
+      generateBtn: 'Generate',
+      saveBtn: 'Save',
       range: 1,
       maxGenerations: 4,
       fetched: false,
       recipes: [],
+      chosenRecipe: null,
       myList: new CustomUserList(),
       randomNum: 0,
       showDescription: false,
       showIngredients: false
     }),
+    props: {
+      myAccount: {
+        type: Object
+      }
+    },
     components: {
     },
     created: function () {
@@ -154,7 +171,8 @@ import CustomUserList from '../lib/Classes/CustomUserList'
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     const result = await response.json(); // Parse JSON response
-                    this.recipes = result.recipes; // Update component data
+                    this.recipes = new Generate(result.recipes); // Update component data
+                    this.chosenRecipe = this.recipes.generateRandomRecipe()
                     this.fetched = true;
                 } else {
                     const result = await response.text(); // Parse plain text response
@@ -168,16 +186,40 @@ import CustomUserList from '../lib/Classes/CustomUserList'
         }
       },
       getRandomRecipe() {
-        this.randomNum = Math.floor(Math.random() * this.recipes.length);
+        this.chosenRecipe = this.recipes.generateRandomRecipe();
         this.fetched = true
       },
       removeHtmlTags(text) {
         return text?.replace(/<[^>]*>?/gm, '');
       },
       updateMyRecipes(recipe) {
-            this.myList.addRecipe(recipe)
-            this.$emit('update-my-custom-recipes', this.myList)
-        }
+          this.itemsAdded++;
+          this.myList.addRecipe(recipe)
+          // this.$emit('update-my-custom-recipes', this.myList)
+      },
+      updateAccount() {
+        fetch('http://localhost:8080/updateAccount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              id: this.myAccount.getId(), 
+              username: this.myAccount.getUserName(), 
+              password: this.myAccount.getPassword(), 
+              recipeIds: [
+                ...this.myAccount.getRecipeIds(), 
+                ...this.myList.getRecipesList().map((recipe) => recipe.getID())
+              ].join('\n') 
+            })
+        })
+        .then(response => {
+            if (!response.ok) { throw new Error("Failed updating account")}
+        })
+        .catch(error => {
+            console.log(error);
+        })
+      }
     }
   }
   //

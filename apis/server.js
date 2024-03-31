@@ -29,7 +29,7 @@ const admin_password = 'Elijah85VyMqp5lWjFrZxedJzSnwynE2t';
 app.get('/getAccounts', (req, res) => {
     conn.login(admin_username, admin_password, (err, userInfo) => {
         if (err) { return console.error(err); }
-        conn.query("SELECT Name, Password__c, ImageLinks__c FROM Account", (err, result) => {
+        conn.query("SELECT Id, Name, Password__c, RecipeIds__c FROM Account", (err, result) => {
             if (err) {
                 res.status(500).json({ error: err });
             } else {
@@ -39,6 +39,25 @@ app.get('/getAccounts', (req, res) => {
         });
     });
 });
+
+app.get('/getUserAccount', (req, res) => {
+    const { param1, param2 } = req.query;
+    conn.login(admin_username, admin_password, (err, userInfo) => {
+        if (err) { return console.error(err); }
+        conn.query('SELECT Id, Name, Password__c, RecipeIds__c FROM Account', (err, result) => {
+            if (err) {
+                res.status(500).json({ error: err });
+            }
+            result.records.forEach((record) => {
+                if (record.Name === param1 && record.Password__c === param2) {
+                    res.json(record);
+                    res.send(record);
+                }
+            })
+        });
+    });
+});
+
 
 app.post('/addAccount', (req, res) => {
     const { username, password } = req.body;
@@ -110,6 +129,28 @@ app.get('/getRecipesFromBulk', (req, res) => {
         console.error('There was a problem with the fetch operation:', error);
     });
 
+})
+
+app.post('/updateAccount', (req, res) => {
+    const { id, username, password, recipeIds } = req.body;
+
+    conn.login(admin_username, admin_password, (err, userInfo) => {
+        if (err) { return console.error(err); }
+
+        // Define the Account update data
+        const updatedAccountData = {
+            Id: id,
+            Name: username, // Field to be updated
+            Password__c: password,
+            RecipeIds__c: recipeIds
+        };
+
+        // Updating the Account record
+        conn.sobject("Account").update(updatedAccountData, function(err, ret) {
+            if (err || !ret.success) { return console.error(err, ret); }
+            console.log('Updated Successfully : ' + ret.id);
+          });
+    });
 })
 
 app.listen(port, () => {

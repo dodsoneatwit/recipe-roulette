@@ -1,27 +1,22 @@
 import User from './User'
-import Recipe from './Recipe'
-import CustomUserList from './CustomUserList'
 
-class Account extends User {
-
-    
-    mySettings = {
-        user_name: username,
-        password: password
-    };
+export default class Account extends User {
 
     email = '';
-
+    recipe_ids = []
     /**
      * Initializes an official account for a given user
      * within the app
      * @constructor
      * @param {string} username 
      * @param {string} password
+     * @param {string} account_id
+     * @param {array} recipe_ids
      */
-    constructor(username, password, id) {
+    constructor(username, password, account_id, recipe_ids) {
         super(username, password);
-        this.id = id
+        this.account_id = account_id
+        this.recipe_ids = recipe_ids == null ? [] : recipe_ids
     }
 
     getUserName() {
@@ -33,15 +28,15 @@ class Account extends User {
     }
 
     getId() {
-        return this.id;
+        return this.account_id;
     }
 
-    logIntoAccount() {
-        
+    getRecipeIds() {
+        return this.recipe_ids
     }
 
-    addPreviouslyViewed() {
-
+    updateRecipeIds(value) {
+        this.recipe_ids.push(value);
     }
 
 }

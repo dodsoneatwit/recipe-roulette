@@ -96,6 +96,7 @@
 </template>
 
 <script >
+import Account from "../lib/Classes/Account"
 
 export default {
     name: 'SignIn',
@@ -104,6 +105,7 @@ export default {
         username: '',
         password: '',
         re_enter_password: '',
+        account: null,
         login: true,
         validLoginAccount: null,
         validSignUpAccount: null,
@@ -186,6 +188,34 @@ export default {
             }
 
         },
+        async getAccountDetails(username, password) {
+              await fetch(`http://localhost:8080/getuserAccount?param1=${username}&param2=${password}`, {
+                  method: 'GET',
+                  headers: {
+                      'If-Modified-Since': 'YourLastModifiedTime'
+                  }
+              })
+              .then(response => {
+                  if (response.status === 304) {
+
+                  } else if (response.ok) {
+                      const contentType = response.headers.get('content-type');
+                      if (contentType && contentType.includes('application/json')) {
+                          return response.json(); // Parse JSON response
+                      } else {
+                          return response.text(); // Return plain text response
+                      }
+                  } else {
+                      throw new Error(`Failed to retrieve response data: ${response.status}`)
+                  }
+              })
+              .then(e => {
+                this.account = new Account(e.Name, e.Password__c, e.Id, e.RecipeIds__c == null ? [] : e.RecipeIds__c.split('\n'));
+              })
+              .catch(error => {
+                  console.log(error);
+              })
+        },
         createNewAccount() {
             const newUsername = this.username
             const newPassword = this.password
@@ -204,8 +234,14 @@ export default {
                 console.log(error);
             })
         },
-        sendSignInResults() {
-            this.$emit('send-sign-in-results', this.validLoginAccount)
+        async sendSignInResults() {
+            await this.getAccountDetails(this.username, this.password)
+            let myAccount = this.account;
+            let signInResults = {
+                validLogin: true,
+                account: myAccount
+            }
+            this.$emit('send-sign-in-results', signInResults)
         },
         reloadPage() {
             window.location.reload();

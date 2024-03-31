@@ -1,11 +1,11 @@
-class Generate {
+export default class Generate {
 
     constructor(recipes) {
         this.recipes = recipes;
     }
 
     generateRandomRecipe() {
-        let recipeIndex = Math.floor(Math.random() * this.recipes.length())
+        let recipeIndex = Math.floor(Math.random() * this.recipes.length)
         return this.recipes[recipeIndex];
     }
 }

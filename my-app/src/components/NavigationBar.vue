@@ -45,10 +45,16 @@ export default {
   name: 'NavigationBar',
   data: () => ({
     title: 'Recipe Roulette',
-    accountName: 'Elijah Dodson',
+    accountName: '',
     openHamburgerButton: false
   }),
+  props: {
+    myAccount: {
+      type: Object
+    }
+  },
   created: function () {
+    this.accountName = this.myAccount.getUserName()
   },
   methods: {
     sendProfileClicked() {
