@@ -14,7 +14,7 @@
                 </v-icon>
             </template>
         </v-app-bar>
-        <div v-if="customList !== undefined && customList.length > 0">
+        <div>
             <div v-for="i in customList.getNumberOfRecipes()/2" :key="i">
                 <v-row class="gallery-row">
                     <div v-for="j in 2" :key="j">
@@ -134,7 +134,7 @@ export default {
             const account = await this.getAccountDetails();
             console.log('Account: ' + account)
             //https://api.spoonacular.com/recipes/{id}/information
-            account.getRecipeIds().forEach((id) => {
+            account.getRecipeIds().forEach((id, index) => {
                 fetch (this.url + `${id}/information?apiKey=${this.apiKey}`)
                 .then((response) => {
                     if (!response.ok) {
@@ -144,14 +144,15 @@ export default {
                 })
                 .then((recipe) => {
                     this.customList.addRecipe(recipe);
-                    console.log('CustomList: ' + this.customList.getRecipesList())
-                    console.log('Recipe: ' + recipe)
+                    console.log('CustomList: ' + this.customList.getNumberOfRecipes())
+                    console.log('Recipe: ' + recipe.id)
                 })
                 .catch((error) => {
                     console.log('Error fetching search recipes from spoonacular')
                 })
             })
-            console.log('My List: ' + this.customList.getRecipesList())
+            let firstRecipe = this.customList.getRecipeAtIndex(0);
+            //console.log('My List First Item: ' + firstRecipe.getTitle())
         },
         async getAccountDetails() {
             try {
