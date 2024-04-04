@@ -17,11 +17,6 @@
                             :label="'Gluten Free'"
                         />
                     </v-row>
-                    <!-- <v-row justify="center">
-                        <v-btn @click="filterByNutrition()">
-                            Accept Filter
-                        </v-btn>
-                    </v-row> -->
                 </v-container>
             </v-row>
             <v-row class="gallery-row">
