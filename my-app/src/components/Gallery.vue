@@ -1,19 +1,42 @@
 <template>
     <v-card>
         <template v-slot:text>
-            <div v-for="i in recipes.length/2" :key="i">
-                <v-row class="gallery-row">
-                    <div v-for="j in 2" :key="j">
-                        <v-col>
+        <v-row class="checkbox">
+                <v-container fluid>
+                    <v-row justify="center">
+                        <v-checkbox
+                            v-model="restrictions.vegan"
+                            :label="'Vegan'"
+                        />
+                        <v-checkbox
+                            v-model="restrictions.vegetarian"
+                            :label="'Vegetarian'"
+                        />
+                        <v-checkbox
+                            v-model="restrictions.glutenFree"
+                            :label="'Gluten Free'"
+                        />
+                    </v-row>
+                    <!-- <v-row justify="center">
+                        <v-btn @click="filterByNutrition()">
+                            Accept Filter
+                        </v-btn>
+                    </v-row> -->
+                </v-container>
+            </v-row>
+            <v-row class="gallery-row">
+                <v-container>
+                    <v-row>
+                        <v-col v-for="(recipe, i) in filteredRecipes" :key="i" cols="12" sm="6" md="4" lg="3">
                             <v-card class="recipe" max-width="500" elevation="6">
-                                <img :src="recipes[i * 2 + j]?.image" alt="Recipe Image">
+                                <img :src="recipe?.image" alt="Recipe Image">
                                 <v-row style="border-color: red;">
                                     <v-col>
-                                        <v-card-title class="mt-2 anta-regular title"> <b>{{ recipes[i * 2 + j]?.title }}</b></v-card-title>
+                                        <v-card-title class="mt-2 anta-regular title"> <b>{{ recipe?.title }}</b></v-card-title>
                                     </v-col>
                                 </v-row>
                                 <v-row justify="center">
-                                    <v-btn size="small" class="addToList" @click="updateMyRecipes(recipes[i * 2 + j])">
+                                    <v-btn size="small" class="addToList" @click="updateMyRecipes(recipe)">
                                         Add To Custom List
                                         <v-icon class="">
                                             <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
@@ -29,24 +52,24 @@
                                 <v-card-actions>
                                     <v-card-subtitle class="mt-2 anta-regular" >Description</v-card-subtitle>
                                     <v-btn
-                                        :icon="showDescription[i * 2 + j] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                                        @click="showDescription[i * 2 + j] = !showDescription[i * 2 + j]"
+                                        :icon="showDescription[i] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                                        @click="showDescription[i] = !showDescription[i]"
                                     ></v-btn>
                                     <v-spacer/>
                                     <v-card-subtitle class="mt-2 anta-regular" >Instructions</v-card-subtitle>
                                     <v-btn
-                                    :icon="showIngredients[i * 2 + j] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                                    @click="showIngredients[i * 2 + j] = !showIngredients[i * 2 + j]"
+                                    :icon="showIngredients[i] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                                    @click="showIngredients[i] = !showIngredients[i]"
                                 ></v-btn>
                                 </v-card-actions>
                                 <v-expand-transition>
-                                    <div v-show="showDescription[i * 2 + j]">
+                                    <div v-show="showDescription[i]">
                                         <v-divider></v-divider>
 
                                         <v-card-text class="mt-2 anta-regular" >
-                                            {{ removeHtmlTags(recipes[i * 2 + j]?.summary) }}
+                                            {{ removeHtmlTags(recipe?.summary) }}
                                             <v-row class="diet">
-                                                <div v-if="recipes[i * 2 + j]?.vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
+                                                <div v-if="recipe?.vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
                                                     <v-icon>
                                                         <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
                                                         <v-tooltip
@@ -57,7 +80,7 @@
                                                         </v-tooltip>
                                                     </v-icon>
                                                 </div>
-                                                <div v-if="recipes[i * 2 + j]?.vegan" class="diet-icons">
+                                                <div v-if="recipe?.vegan" class="diet-icons">
                                                     <v-icon>
                                                         <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
                                                         <v-tooltip
@@ -68,7 +91,7 @@
                                                         </v-tooltip>
                                                     </v-icon>
                                                 </div>
-                                                <div v-if="recipes[i * 2 + j]?.glutenFree" class="diet-icons">
+                                                <div v-if="recipe?.glutenFree" class="diet-icons">
                                                     <v-icon>
                                                         <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
                                                         <v-tooltip
@@ -85,19 +108,19 @@
                                     </div>
                                 </v-expand-transition>
                                 <v-expand-transition>
-                                    <div v-show="showIngredients[i * 2 + j]">
+                                    <div v-show="showIngredients[i]">
                                         <v-divider></v-divider>
 
                                         <v-card-text class="mt-2 anta-regular" >
-                                            {{ removeHtmlTags(recipes[i * 2 + j]?.instructions) }}
+                                            {{ removeHtmlTags(recipe?.instructions) }}
                                         </v-card-text>
                                     </div>
                                 </v-expand-transition>
                             </v-card>
                         </v-col>
-                    </div>
-                </v-row>
-            </div>
+                    </v-row>
+                </v-container>
+            </v-row>
         </template>
     </v-card>
 </template>
@@ -110,12 +133,37 @@ export default {
     name: 'Gallery',
     data: () => ({
         recipes: [],
+        tempRecipesToRefill: [],
         myList: new CustomUserList(),
         showDescription: [],
-        showIngredients: []
+        showIngredients: [],
+        restrictions: {
+            vegan: false,
+            vegetarian: false,
+            glutenFree: false
+        },
+        showRecipeByFilter: []
     }),
     created: function() {
         this.retrieveRecipes();
+    },
+    computed: {
+        filteredRecipes() {
+            let filtered = this.recipes;
+
+            // // Apply filters
+            if (this.restrictions.vegan) {
+                filtered = filtered.filter(recipe => recipe.vegan);
+            }
+            if (this.restrictions.vegetarian) {
+                filtered = filtered.filter(recipe => recipe.vegetarian);
+            }
+            if (this.restrictions.glutenFree) {
+                filtered = filtered.filter(recipe => recipe.glutenFree);
+            }
+
+            return filtered;
+        }
     },
     methods: {
         retrieveRecipes() {
@@ -141,6 +189,7 @@ export default {
             })
             .then((result) => {
                 this.recipes = result.recipes;
+                this.tempRecipesToRefill = result.recipes
                 this.fillShow();
             })
             .catch((error) => {
@@ -152,6 +201,14 @@ export default {
             for (let i = 0; i < length; i++) {
                 this.showDescription[i] = false;
                 this.showIngredients[i] = false;
+                this.showRecipeByFilter[i] = true
+            }
+            
+        },
+        resetFilterVals() {
+            let length = this.showRecipeByFilter.length
+            for (let i = 0; i < length; i++) {
+                this.showRecipeByFilter[i] = true
             }
             
         },
@@ -161,6 +218,30 @@ export default {
         updateMyRecipes(recipe) {
             this.myList.addRecipe(recipe)
             this.$emit('update-my-custom-recipes', this.myList)
+        },
+        filterByNutrition() {
+            this.recipes = this.tempRecipesToRefill
+            this.resetFilterVals();
+            this.recipes.forEach((recipe, index) => {
+
+                const filter_restrictions = [
+                    recipe.vegan,
+                    recipe.vegetarian,
+                    recipe.glutenFree
+                ]
+
+                if (filter_restrictions[0] !== this.restrictions.vegan) {
+                    this.showRecipeByFilter[index] = false
+                }
+
+                if (filter_restrictions[1] !== this.restrictions.vegetarian) {
+                    this.showRecipeByFilter[index] = false
+                }
+
+                if (filter_restrictions[2] !== this.restrictions.glutenFree) {
+                    this.showRecipeByFilter[index] = false
+                }
+            })
         }
     }
     
@@ -195,5 +276,8 @@ export default {
 }
 .addToList {
     margin-bottom:1rem
+}
+.checkbox {
+    position: sticky
 }
 </style>
