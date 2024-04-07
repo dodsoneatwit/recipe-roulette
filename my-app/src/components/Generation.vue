@@ -69,7 +69,7 @@
                                           activator="parent"
                                           location="bottom"
                                         >
-                                        Veganinstruction
+                                        Vegan
                                         </v-tooltip>
                                     </v-icon>
                                 </div>

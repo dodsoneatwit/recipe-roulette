@@ -35,9 +35,16 @@
 export default {
     name: 'Profile',
     data: () => ({
-        username: 'Elijah Dodson',
-        password: '1234567890'
+        
     }),
+    props: {
+        username: {
+            type: String
+        },
+        password: {
+            type: String
+        },
+    },
     methods: {
         exitProfile() {
             this.$emit('exit-profile', false)

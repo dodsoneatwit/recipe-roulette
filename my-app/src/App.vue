@@ -37,6 +37,8 @@
       </v-card>
       <Profile
         v-if="profileClicked"
+        :username="account.getUserName()"
+        :password="account.getPassword()"
         @exit-profile="profileIsClicked($event)" 
       />
       <CustomList
