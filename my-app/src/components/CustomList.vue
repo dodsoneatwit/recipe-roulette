@@ -112,7 +112,7 @@ export default {
         temp: 'Not Yet',
         customList: new CustomUserList(),
         url: `https://api.spoonacular.com/recipes/`,
-        apiKey: 'df1234e4fcad4177a07f6ba789141cd0',
+        apiKey: '',
     }),
     props: {
         username: {
