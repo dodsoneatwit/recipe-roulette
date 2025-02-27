@@ -129,7 +129,7 @@ export default {
     data: () => ({
         search: '',
         url: `https://api.spoonacular.com/recipes/complexSearch?`,
-        apiKey: 'df1234e4fcad4177a07f6ba789141cd0',
+        apiKey: '',
         recipeCount: 100,
         recipes: [],
         maxWidth: 310,
