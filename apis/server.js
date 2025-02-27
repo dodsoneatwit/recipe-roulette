@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); // Import the cors middleware
 
 // API key and query for recipes
-const apiKey = 'df1234e4fcad4177a07f6ba789141cd0';
+const apiKey = '';
 const query = 'pasta';
 const numberOfResults = 100; // Number of recipes you want to retrieve
 
