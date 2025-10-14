@@ -1,0 +1,70 @@
+@startuml
+title Recipe Roulette Activity Diagram
+(*) -> "Enter Sign In/Login Page"
+
+if "HasAccount" then
+   -->[Log In] "Log Into Account"
+
+   if "Valid Credentials" then
+      -->[Enter Page] ===RedirectToPage===
+      note right
+         The user's account 
+         username and password; this should
+         exist within the database 
+         through at this point 
+      end note
+   else
+      -->["Invalid Login"] "Retry Login"
+      --> "Log Into Account"
+   endif   
+else 
+   -->[Sign Up] "Create New Account"
+   --> "Enter Sign In/Login Page"
+endif
+
+===RedirectToPage=== --> "Generate Random Recipe"
+note right
+    An API will have grabbed recipe resources
+    at page render; recipes are initially 
+    fetched through an API and data is cleaned 
+    for retrevial
+end note
+--> "Add Recipe To Custom List"
+note right
+   User account will contain IDs of each recipe
+   within the Salesforce database
+end note
+--> "Scroll through Gallery of recipes"
+--> "Filter by dietary restrictions"
+--> "Add recipe to custom list"
+--> "Look for Another Recipe Within Search Bar"
+--> "Browse Curated Selection"
+--> "View a Recipe's Description and Ingredients"
+--> "Add Recipe to Custom List"
+note right
+   Sending POST request to add
+   recipe link to a user account 
+   property in Salesforce that holds
+   these values
+end note
+--> "Log Out"
+--> (*)
+@enduml
+
+if "Do redirect?" then
+ ->[yes] "redirect request"
+ --> ==BEFORE_DESTROY===
+else
+ if "Do Forward?" then
+  -left->[yes] "Forward request"
+  --> ==BEFORE_DESTROY===
+ else
+  -right->[no] "Render page template"
+  --> ==BEFORE_DESTROY===
+ endif
+endif
+
+--> "Page.onDestroy()"
+-->(*)
+
+@enduml

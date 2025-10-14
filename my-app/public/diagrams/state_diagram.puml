@@ -1,0 +1,38 @@
+@startuml test
+scale 350 width
+
+<style>
+  diamond {
+    BackgroundColor #palegreen
+    LineColor #green
+    LineThickness 2.5
+}
+</style>
+
+' skinparam BackgroundColor LightYellow
+
+' Login Step
+state Login #LightBlue{
+
+  state CaptureCredentials #LightYellow : Acquire User Login Info
+  state SearchDatabase #LightYellow : Use login info to find a match within database
+  state AccountIdentified #LightYellow : Successfully found account
+  state AccountNotFound #LightYellow : Account not found within database
+  state SendUserSatisfactory #LightYellow : Send a successful 'Logged In' message
+  state SendUserUnsatisfactory #LightYellow : Send error message for account not found
+  state IsFound <<choice>>
+
+  CaptureCredentials -down-> SearchDatabase
+  SearchDatabase -down-> IsFound
+  IsFound -down-> AccountIdentified
+  IsFound -down-> AccountNotFound 
+  AccountIdentified -down-> SendUserSatisfactory
+  AccountNotFound --> SendUserUnsatisfactory
+  SendUserUnsatisfactory -> CaptureCredentials
+}
+
+
+[*] -down->Login : start
+Login -down-> [*] : Direct user to app homepage
+
+@enduml

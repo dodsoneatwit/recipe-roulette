@@ -1,0 +1,80 @@
+@startuml ObjectModel
+
+
+
+class Recipe {
+    __Private Data__
+    -int id
+    -String name
+    -int steps
+    -String difficulty
+    -boolean isVegan
+    -boolean isSpicy
+    -boolean isVegetarian
+    -boolean isGlutenFree
+    -Object nutrition
+    __Methods__
+    +printGeneralInfo()
+    +getDifficulty()
+    +getName()
+    +getId()
+    +getIsSpicy()
+    +getIsVegetarian()
+    +getVegan()
+    +getIsGlutenFree()
+    +printIngredients()
+    +printStepsToMake()
+}
+
+class Generate {
+    __Private Data__
+    #int numOfRecipesToGenerate
+    __Methods__
+    +generateRandomRecipe()
+}
+
+class CustomUserList {
+    __Private Data__
+    -List<Recipe> list
+    -int count
+    __Methods__
+    +getNumberOfRecipes()
+    +removeRecipe()
+    +addRecipe()
+    +filter()
+    +sort()
+    +getRecipesList()
+}
+
+class User {
+    __Protected Data__
+    #String username
+    #String password
+    #String email
+    __Methods__
+    +getPassword()
+    +getUsername()
+    +getEmail()
+}
+
+class Account {
+   __Private Data__
+    -Object mySettings
+    -CustomUserList myList
+    -CustomUserList previouslyViewed
+    __Methods__
+    +setPassword()
+    +setUsername()
+    +setEmail()
+    +logIntoAccount()
+    +initializePrivacySettings()
+    +logOutOfAccount()
+    +printLikedRecipesList()
+    +addToPreviouslyViewed()
+    +printPreviouslyViewedRecipes()
+}
+
+
+User <|-- Account
+
+@enduml

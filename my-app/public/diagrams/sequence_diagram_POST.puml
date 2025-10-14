@@ -1,0 +1,14 @@
+@startuml recipe roulette insert
+
+
+actor User
+participant "Recipe Roulette App" as App
+participant "Salesforce Database" as Database
+
+User -> App: Enters username and password
+User -> App: Submits account
+App -> Database: Send POST Request for account creation
+Database -> App: Send 200 Success response
+App -> User: Prompt User to app on their account
+
+@enduml

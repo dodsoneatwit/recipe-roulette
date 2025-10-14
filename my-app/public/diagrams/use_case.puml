@@ -1,0 +1,11 @@
+@startuml
+
+actor user1
+actor user2
+
+user1 --> (generating random recipe) #red;line.dotted;text:blue   : generating
+user2 --> (creating custom recipe list for profile) #red;line.dotted;text:blue  : creating recipe list
+user1 --> (creating a unique user profile) #red;line.dotted;text:blue   : profile creation
+user2 --> (querying food items in search bar) #red;line.dotted;text:blue   : searching
+
+@enduml

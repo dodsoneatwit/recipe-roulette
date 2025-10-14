@@ -1,0 +1,8 @@
+@startuml
+
+actor user1
+
+user1 --> (opting in for food delivery) #red;line.dotted;text:blue   : ordering
+user1 --> (streaming recipe tutorials) #red;line.dotted;text:blue   : streaming
+
+@enduml
