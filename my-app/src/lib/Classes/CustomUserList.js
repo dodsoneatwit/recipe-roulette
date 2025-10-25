@@ -48,6 +48,10 @@ export default class CustomUserList {
         this.myRecipesList = this.myRecipesList.filter((e) => e.title !== recipe.title)
     }
 
+    setRecipesList(new_list) {
+        this.myRecipesList = new_list
+    }
+
     getRecipesList() {
         return this.myRecipesList
     }

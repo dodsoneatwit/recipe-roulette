@@ -97,12 +97,13 @@
                         </v-col>
                     </div>
                 </v-row>
+                </div>
             </div>
-        </div>
         </div>
 </template>
 <script>
 import Account from './../lib/Classes/Account'
+import Recipe from './../lib/Classes/Recipe'
 import CustomUserList from '@/lib/Classes/CustomUserList';
 export default {
     name: 'CustomList',
@@ -111,8 +112,8 @@ export default {
         showIngredients: [],
         temp: 'Not Yet',
         customList: new CustomUserList(),
-        url: `https://api.spoonacular.com/recipes/`,
-        apiKey: '',
+        url: import.meta.env.VITE_APP_RECIPE_URL,
+        apiKey: import.meta.env.VITE_APP_RECIPE_API_KEY,
     }),
     props: {
         username: {
@@ -120,6 +121,9 @@ export default {
         },
         password: {
             type: String
+        },
+        myAccount: {
+            type: Object
         }
     },
     created: function() {
@@ -131,58 +135,27 @@ export default {
     },
     methods: {
         async initializeCustomlist() {
-            const account = await this.getAccountDetails();
-            console.log('Account: ' + account)
-            //https://api.spoonacular.com/recipes/{id}/information
-            account.getRecipeIds().forEach((id, index) => {
-                fetch (this.url + `${id}/information?apiKey=${this.apiKey}`)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Error searching for recipe')
-                    }
-                    return response.json();
-                })
-                .then((recipe) => {
-                    this.customList.addRecipe(recipe);
-                    console.log('CustomList: ' + this.customList.getNumberOfRecipes())
-                    console.log('Recipe: ' + recipe.id)
-                })
-                .catch((error) => {
-                    console.log('Error fetching search recipes from spoonacular')
-                })
-            })
-            let firstRecipe = this.customList.getRecipeAtIndex(0);
-            //console.log('My List First Item: ' + firstRecipe.getTitle())
-        },
-        async getAccountDetails() {
-            try {
-
-                let response = await fetch(`http://localhost:8080/getuserAccount?param1=${this.username}&param2=${this.password}`, {
-                    method: 'GET',
+            console.log('Account: ', this.myAccount.id)
+            console.log('Recipe IDS', this.myAccount.recipe_ids)
+            const query_recipe_ids = this.myAccount.recipe_ids.join(",")
+            const response = await fetch (`https://${this.url}/recipes/informationBulk?ids=${query_recipe_ids}`, {
+                    method: "GET",
                     headers: {
-                        'If-Modified-Since': 'YourLastModifiedTime'
-                    }
-                });
-                let data = ''
-                if (response.status === 304) {
-
-                } else if (response.ok) {
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        data = await response.json(); // Parse JSON response
-                    } else {
-                        data = await response.text(); // Return plain text response
-                    }
-                } else {
-                    throw new Error(`Failed to retrieve response data: ${response.status}`)
-                }
-                let account = new Account(data.Name, data.Password__c, data.Id, data.RecipeIds__c == null ? [] : data.RecipeIds__c.split('\n'))
-                console.log('Recipe Ids: ' + account.getRecipeIds())
-                return account;
-
-            } catch(error) {
-                console.error('Error occurred while fetching account details: ' + error)
-            }
+                        'x-rapidapi-key': this.apiKey,
+                        'x-rapidapi-host': this.url
+                    },
+            })
+            const recipes = await response.json();
+            console.log('--RECIPES--',recipes)
+            // title, id, imageUrl, instructions, description, restrictions
+            this.customList.setRecipesList(recipes.map((recipe) => new Recipe(
+                recipe.title,
+                recipe.id,
+                recipe.image,
+                recipe.instructions,
+                recipe.description,
+                recipe.diets
+            )))
         },
         exitCustomList() {
             this.$emit('exit-custom-list', false)

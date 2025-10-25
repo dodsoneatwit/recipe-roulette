@@ -54,7 +54,7 @@ export default {
     }
   },
   created: function () {
-    this.accountName = this.myAccount.getUserName()
+    this.accountName = this.myAccount.username
   },
   methods: {
     sendProfileClicked() {

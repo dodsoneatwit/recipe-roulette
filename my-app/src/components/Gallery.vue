@@ -122,11 +122,13 @@
 
 <script>
 
+import Account from "../lib/Classes/Account"
 import CustomUserList from '../lib/Classes/CustomUserList.js';
 
 export default {
     name: 'Gallery',
     data: () => ({
+        api_url: import.meta.env.VITE_APP_GATEWAY_URL,
         recipes: [],
         tempRecipesToRefill: [],
         myList: new CustomUserList(),
@@ -139,6 +141,11 @@ export default {
         },
         showRecipeByFilter: []
     }),
+    props: {
+        myAccount: {
+            type: Object
+        }
+    },
     created: function() {
         this.retrieveRecipes();
     },
@@ -161,35 +168,20 @@ export default {
         }
     },
     methods: {
-        retrieveRecipes() {
-            fetch('http://localhost:8080/getRecipes', {
-                method: 'GET',
-                headers: {
-                    'If-Modified-Since': 'YourLastModifiedTime'
-                }
+        async retrieveRecipes() {
+            const response = await fetch(`${this.api_url}/dev/api/get_recipes`, {
+                    method: "GET",
+                    headers:    {
+                        'Content-Type': 'application/json'
+                    },
             })
-            .then(response =>{
-                if (response.status === 304) {
+            console.log('--RESPONSE--',response)
+            const result = await response.json(); // Parse JSON response
+            console.log('--RECIPES DATA--',result)
+            this.recipes = result.recipes;
+            this.tempRecipesToRefill = result.recipes
+            this.fillShow();
 
-                } else if (response.ok) {
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        return response.json(); // Parse JSON response
-                    } else {
-                        return response.text(); // Return plain text response
-                    }
-                } else {
-                    throw new Error(`Failed to retrieve response data: ${response.status}`)
-                }
-            })
-            .then((result) => {
-                this.recipes = result.recipes;
-                this.tempRecipesToRefill = result.recipes
-                this.fillShow();
-            })
-            .catch((error) => {
-                console.log('Failed to retrieve recipes: ', error)
-            })
         },
         fillShow() {
             let length = this.recipes.length
@@ -210,8 +202,22 @@ export default {
         removeHtmlTags(text) {
             return text?.replace(/<[^>]*>?/gm, '');
         },
-        updateMyRecipes(recipe) {
-            this.myList.addRecipe(recipe)
+        async updateMyRecipes(recipe) {
+            console.log('--USER ID--',this.myAccount.id)
+            console.log('--RECIPE ID--',recipe.id)
+            const response = await fetch(`${this.api_url}/dev/api/add_recipe_to_list`, {
+                method: "POST",
+                headers:    {
+                        'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: this.myAccount.id,
+                    recipe_id: recipe.id
+                })
+            })
+
+            const result = await response.json()
+            this.myList.setRecipesList(result.recipes)
             this.$emit('update-my-custom-recipes', this.myList)
         },
         filterByNutrition() {

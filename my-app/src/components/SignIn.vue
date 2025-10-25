@@ -11,59 +11,59 @@
                 <v-form @submit.prevent>
                     <v-text-field
                         v-model=username
-                        :rules="rules"
+                        :rules="[rules.min]"
                         label="Username"
                     ></v-text-field>
                     <v-text-field
                         v-model=password
-                        :rules="rules"
+                        :rules="[rules.min]"
                         label="Password"
                     ></v-text-field>
                     <v-btn 
-                    class="mt-2 anta-regular" 
-                    type="submit" 
-                    block
-                    @click="checkLogin()"
+                        class="mt-2 anta-regular" 
+                        type="submit" 
+                        block
+                        @click="checkLoginSignUp()"
                     >
                         Login
                     </v-btn>
                 </v-form>
                 <div class="accountActionBtn">
-                        <v-row dense class="anta-regular">
-                            <span class="account-check">Don't have an account?</span> 
-                            <v-btn
+                    <v-row dense class="anta-regular">
+                        <span class="account-check">Don't have an account?</span> 
+                        <v-btn
                             plain
                             class="anta-regular"
                             style="margin-left:0.5rem"
                             @click="login = !login"
-                            >
-                            Sign-Up
-                            </v-btn>
-                        </v-row>
+                        >
+                        Sign-Up
+                        </v-btn>
+                    </v-row>
                 </div>
             </v-window>
             <v-window class="login_signup" v-if="!login">
                 <v-form @submit.prevent>
                 <v-text-field
                     v-model="username"
-                    :rules="rules"
+                    :rules="[rules.min]"
                     label="Username"
                 ></v-text-field>
                 <v-text-field
                     v-model="password"
-                    :rules="rules"
+                    :rules="[rules.min]"
                     label="Password"
                 ></v-text-field>
                 <v-text-field
                     v-model="re_enter_password"
-                    :rules="rules"
+                    :rules="[rules.min]"
                     label="Re-enter Password"
                 ></v-text-field>
                 <v-btn 
-                 class="mt-2 anta-regular" 
-                 type="submit" 
-                 block
-                 @click="checkSignUp()"
+                    class="mt-2 anta-regular" 
+                    type="submit" 
+                    block
+                    @click="checkLoginSignUp()"
                 >
                     Sign-Up
                 </v-btn>
@@ -72,10 +72,10 @@
                     <v-row dense class="anta-regular">
                         <span class="account-check">Already have an account?</span> 
                         <v-btn
-                         plain
-                         class="anta-regular invisible"
-                         style="margin-left:0.5rem"
-                         @click="login = !login"
+                            plain
+                            class="anta-regular invisible"
+                            style="margin-left:0.5rem"
+                            @click="login = !login"
                         >
                         Login
                         </v-btn>
@@ -84,10 +84,10 @@
             </v-window>
             <div class="text-center">
                 <v-btn
-                 class="mt-2 anta-regular" 
-                 type="submit" 
-                 ref="forceReload"
-                 @click="reloadPage()"
+                    class="mt-2 anta-regular" 
+                    type="submit" 
+                    ref="forceReload"
+                    @click="reloadPage()"
                 >Reload
             </v-btn>
             </div>
@@ -96,150 +96,86 @@
 </template>
 
 <script >
+import { reactive } from 'vue';
 import Account from "../lib/Classes/Account"
 
 export default {
     name: 'SignIn',
     data: () => ({
+        api_url: import.meta.env.VITE_APP_GATEWAY_URL,
         title: 'Sign Up/Log In',
         username: '',
         password: '',
         re_enter_password: '',
         account: null,
         login: true,
-        validLoginAccount: null,
-        validSignUpAccount: null,
-        accounts: [],
-        test: []
+        validAccount: false,
+        test: [],
+        rules: {
+            required: value => !!value || 'This field is required',
+            min: v => v.length >= 6 || 'Minimum 6 characters',
+            email: v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+        }
     }),
-    created: function() {
-        this.initializeAccounts();
+    watch: {
+        account(newAccount) {
+            if (newAccount) {
+                console.log('--ACCOUNT--',newAccount)
+                this.sendSignInResults();
+            }
+        }
     },
     methods: {
-        async retrieveAccounts() {
-            return fetch('http://localhost:8080/getAccounts', {
-                method: 'GET',
-                headers: {
-                    'If-Modified-Since': 'YourLastModifiedTime'
-                }
-            })
-            .then(response => {
-                if (response.status === 304) {
-
-                } else if (response.ok) {
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        return response.json(); // Parse JSON response
-                    } else {
-                        return response.text(); // Return plain text response
-                    }
-                } else {
-                    throw new Error(`Failed to retrieve response data: ${response.status}`)
-                }
-            })
-            .then(e => {
-                let accountsArray = [];
-                e.forEach((account) => {
-                    accountsArray.push({
-                            'username': account.Name,
-                            'password': account.Password__c,
-                            'ImageLinks': account.ImageLinks__c
-                    })
-                })
-                return accountsArray;
-                //alert('Successful Retrieval')
-            })
-            .catch(error => {
-                console.log(error);
-            })
-        },
-        async initializeAccounts() {
-            this.accounts = await this.retrieveAccounts()
-        },
-        checkLogin() {
-            this.validLoginAccount = false;
-            if (this.login) {
-                this.accounts.forEach((account) => {
-                    if (this.username === account?.username && this.password === account?.password) {
-                        this.validLoginAccount = true;
-                    }
-                })
-            }
-            this.sendSignInResults()
-        },
-        async checkSignUp() {
-            this.validSignUpAccount = true;
-            this.accounts.forEach((account) => {
-                    if (
-                        this.username === account?.username && 
-                        this.password === account?.password
-                        ) 
-                    {
-                        this.validSignUpAccount = false;
-                    }
-            })
-            if (this.password === this.re_enter_password && this.validSignUpAccount) {
-                this.createNewAccount();
-                this.accounts = await this.retrieveAccounts();
-                this.login = !this.login
-                this.$refs.forceReload.$el.click();
-            } else {
-                this.validSignUpAccount = false;
-            }
-
-        },
-        async getAccountDetails(username, password) {
-              await fetch(`http://localhost:8080/getuserAccount?param1=${username}&param2=${password}`, {
-                  method: 'GET',
-                  headers: {
-                      'If-Modified-Since': 'YourLastModifiedTime'
-                  }
-              })
-              .then(response => {
-                  if (response.status === 304) {
-
-                  } else if (response.ok) {
-                      const contentType = response.headers.get('content-type');
-                      if (contentType && contentType.includes('application/json')) {
-                          return response.json(); // Parse JSON response
-                      } else {
-                          return response.text(); // Return plain text response
-                      }
-                  } else {
-                      throw new Error(`Failed to retrieve response data: ${response.status}`)
-                  }
-              })
-              .then(e => {
-                this.account = new Account(e.Name, e.Password__c, e.Id, e.RecipeIds__c == null ? [] : e.RecipeIds__c.split('\n'));
-              })
-              .catch(error => {
-                  console.log(error);
-              })
-        },
-        createNewAccount() {
-            const newUsername = this.username
-            const newPassword = this.password
-
-            fetch('http://localhost:8080/addAccount', {
-                method: 'POST',
-                headers: {
+        // async retrieveAccounts() {
+        //     console.log('--RETRIEVE ACCOUNTS HIT--')
+        //     let result = await fetch(`${this.api_url}/dev/api/get_accounts`, {
+        //         method: "GET",
+        //         headers:    {
+        //             'Content-Type': 'application/json'
+        //         }
+        //     })
+        //     console.log(result)
+        //    let data = await result.json()
+        //    return data
+        // },
+        // async initializeAccounts() {
+        //     this.accounts = await this.retrieveAccounts()
+        // },
+        async checkLoginSignUp() {
+            console.log('--RETRIEVE ACCOUNTS HIT--')
+            // account login or signin
+            let result = await fetch(`${this.api_url}/dev/api/${this.login ? 'login_to_account' : 'create_account'}`, {
+                method: "POST",
+                headers:    {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username: newUsername, password: newPassword })
+                body: JSON.stringify({
+                    username: this.username,
+                    password: this.password
+                })
             })
-            .then(response => {
-                if (!response.ok) { throw new Error("Failed creating an account")}
-            })
-            .catch(error => {
-                console.log(error);
-            })
+            let data = await result.json()
+            console.log('--DATA--', data)
+            // initializing account if valid response
+            if (data.user !== undefined) {
+                this.account = {
+                    id: data.user.user_id,
+                    username: data.user.username,
+                    password: data.user.password,
+                    recipe_ids: this.login ? data.user.savedRecipes : []
+                }
+                alert(`Success: ${data.message}`)
+                // this.sendSignInResults()
+            } else {
+                alert(`Error: ${data.message}`)
+            }
+
         },
         async sendSignInResults() {
-            await this.getAccountDetails(this.username, this.password)
-            let myAccount = this.account;
+            // send sign-in results to component
             let signInResults = {
-                validLogin: true,
-                account: myAccount
+                validAccount: true,
+                account: this.account
             }
             this.$emit('send-sign-in-results', signInResults)
         },

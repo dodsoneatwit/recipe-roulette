@@ -123,34 +123,38 @@
 </template>
 
 <script>
+import Account from "../lib/Classes/Account"
 
 export default {
     name: 'Explore',
     data: () => ({
         search: '',
-        url: `https://api.spoonacular.com/recipes/complexSearch?`,
-        apiKey: '',
+        url: import.meta.env.VITE_APP_RECIPE_URL,
+        apiKey: import.meta.env.VITE_APP_RECIPE_API_KEY,
         recipeCount: 100,
         recipes: [],
         maxWidth: 310,
         showDescription: [],
         showIngredients: []
     }),
+    props: {
+        myAccount: {
+            type: Object
+        }
+    },
     methods: {
-        searchRecipeWithKey() {
-            fetch (this.url + `query=${this.search}&number=${this.recipeCount}&addRecipeInformation=true&addRecipeInstructions=true&apiKey=${this.apiKey}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Error searching for recipe')
-                }
-                return response.json();
+        async searchRecipeWithKey() {
+            const response = await fetch (`https://${this.url}/recipes/complexSearch?query=${this.search}&addRecipeInformation=true&addRecipeInstructions=true&number=${this.recipeCount}`, {
+                	method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': this.apiKey,
+                        'x-rapidapi-host': this.url
+                    }
             })
-            .then((recipes) => {
-                this.recipes = recipes.results;
-            })
-            .catch((error) => {
-                console.log('Error fetching search recipes from spoonacular')
-            })
+            console.log('--RESPONSE--',response)
+            const data = await response.json();
+            console.log('--DATA EXPLORE--',data)
+            this.recipes = data.results;
         },
         fillShow() {
             let length = this.recipes.length

@@ -13,10 +13,10 @@ export default class Account extends User {
      * @param {string} account_id
      * @param {array} recipe_ids
      */
-    constructor(username, password, account_id, recipe_ids) {
+    constructor(account_id, username, password, recipe_ids = []) {
         super(username, password);
         this.account_id = account_id
-        this.recipe_ids = recipe_ids == null ? [] : recipe_ids
+        this.recipe_ids = recipe_ids
     }
 
     getUserName() {

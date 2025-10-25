@@ -120,13 +120,6 @@
               {{ generateBtn }}
           </v-btn>
         </center>
-        <div v-if="itemsAdded > 0">
-          <center>
-          <v-btn class="mt-2 anta-regular" @click="updateAccount()">
-              {{ saveBtn }}
-          </v-btn>
-        </center>
-        </div>
     </div>
   </template>
   
@@ -137,8 +130,9 @@ import Generate from '../lib/Classes/Generate'
   export default {
     name: 'Generation',
     data: () => ({
-      username: 'EliDodson',
-      password: 'Elijah85',
+      username: '',
+      password: '',
+      api_url: import.meta.env.VITE_APP_GATEWAY_URL,
       itemsAdded: 0,
       generateBtn: 'Generate',
       saveBtn: 'Save',
@@ -164,32 +158,18 @@ import Generate from '../lib/Classes/Generate'
     },
     methods: {
       async retrieveRecipesInBulk() {
-        try {
-          const response = await fetch('http://localhost:8080/getRecipesFromBulk', {
-                method: 'GET',
-                headers: {
-                    'If-Modified-Since': 'YourLastModifiedTime'
-                }
-            })
-                if (response.status === 304) {
-                // Handle not modified response
-            } else if (response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const result = await response.json(); // Parse JSON response
-                    this.recipes = new Generate(result.recipes); // Update component data
-                    this.chosenRecipes[0] = this.recipes.generateRandomRecipe()
-                    this.fetched = true;
-                } else {
-                    const result = await response.text(); // Parse plain text response
-                    // Handle text response
-                }
-            } else {
-                throw new Error(`Failed to retrieve response data: ${response.status}`);
-            }
-        } catch (error) {
-          console.log('Failed to retrieve recipes: ', error)
-        }
+          const response = await fetch(`${this.api_url}/dev/api/get_recipes_bulk`, {
+                method: "GET",
+                headers:    {
+                    'Content-Type': 'application/json'
+                },
+          })
+          console.log('--RESPONSE--',response)
+          const result = await response.json(); // Parse JSON response
+          console.log('--RECIPES DATA--',result)
+          this.recipes = new Generate(result.recipes); // Update component data
+          this.chosenRecipes[0] = this.recipes.generateRandomRecipe()
+          this.fetched = true;
       },
       getRandomRecipe() {
         this.chosenRecipes = []
@@ -200,33 +180,24 @@ import Generate from '../lib/Classes/Generate'
       removeHtmlTags(text) {
         return text?.replace(/<[^>]*>?/gm, '');
       },
-      updateMyRecipes(recipe) {
-          this.itemsAdded++;
-          this.myList.addRecipe(recipe)
+      async updateMyRecipes(recipe) {
+          console.log('--USER ID--',this.myAccount.id)
+          console.log('--RECIPE ID--',recipe.id)
+          const response = await fetch(`${this.api_url}/dev/api/add_recipe_to_list`, {
+              method: "POST",
+              headers:    {
+                    'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: this.myAccount.id,
+                recipe_id: recipe.id
+              })
+          })
+
+          const result = await response.json()
+          this.myList.setRecipesList(result.recipes)
+
           // this.$emit('update-my-custom-recipes', this.myList)
-      },
-      updateAccount() {
-        fetch('http://localhost:8080/updateAccount', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-              id: this.myAccount.getId(), 
-              username: this.myAccount.getUserName(), 
-              password: this.myAccount.getPassword(), 
-              recipeIds: [
-                ...this.myAccount.getRecipeIds(), 
-                ...this.myList.getRecipesList().map((recipe) => recipe.getID())
-              ].join('\n') 
-            })
-        })
-        .then(response => {
-            if (!response.ok) { throw new Error("Failed updating account")}
-        })
-        .catch(error => {
-            console.log(error);
-        })
       }
     }
   }

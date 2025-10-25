@@ -18,13 +18,6 @@ const port = 8080;
 app.use(bodyParser.json());
 app.use(cors());
 
-// // Create a Salesforce connection
-const conn = new jsforce.Connection({
-    loginUrl: 'https://login.salesforce.com' // Use the appropriate login URL
-});
-
-const admin_username = 'dodsone@empathetic-panda-irq575.com';
-const admin_password = 'Elijah85VyMqp5lWjFrZxedJzSnwynE2t';
 
 app.get('/getAccounts', (req, res) => {
     conn.login(admin_username, admin_password, (err, userInfo) => {

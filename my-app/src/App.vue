@@ -22,6 +22,7 @@
           <template v-if="tab == 'gallery'">
             <Gallery 
               @update-my-custom-recipes="updateMyCustomList($event)"
+              :my-account="account"
             />
           </template>
           <template v-if="tab == 'generate'">
@@ -31,21 +32,25 @@
             />
           </template>
           <template v-if="tab == 'explore'">
-            <Explore />
+            <Explore
+              @update-my-custom-recipes="updateMyCustomList($event)"
+              :my-account="account"
+            />
           </template>
         </v-window>
       </v-card>
       <Profile
         v-if="profileClicked"
-        :username="account.getUserName()"
-        :password="account.getPassword()"
+        :username="account.username"
+        :password="account.password"
         @exit-profile="profileIsClicked($event)" 
       />
       <CustomList
         v-if="customListClicked"
         :custom-list="myList"
-        :username="account.getUserName()"
-        :password="account.getPassword()"
+        :username="account.username"
+        :password="account.password"
+        :my-account="account"
         @exit-custom-list="customListIsClicked($event)" 
       />
       <SignIn
@@ -86,7 +91,7 @@ export default {
   },
   methods: {
     updateSignInValue(value) {
-      this.isSignedIn = value.validLogin;
+      this.isSignedIn = value.validAccount;
       this.account = value.account;
     },
     profileIsClicked(value) {
