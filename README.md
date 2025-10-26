@@ -1,6 +1,5 @@
-# Recipe Roulette
 
-![Alt text]()
+![Alt text](my-app/public/images/recipe-roulette-title.png)
 
 ## About
 
@@ -9,7 +8,7 @@ The Recipe Roulette app is designed to create an ongoing, thrilling, and surpris
 The Generate section will allow a person to press a button and generate a random recipe with each click. There is also a slider that allows them to generate more than one recipe at a time, up to four recipes for quicker suggestions. The Gallery section is unique because for every time a person loads into the tab, a new selection of recipes will be present, making every experience one of a kind. To add on, the user will be able to filter recipes that suit their dietary restrictions. Lastly, the Explore section allows those with more specific preferences to search for a recipe or ingredient of their own. Through use of the search bar, the user could type in ‘cake’ and selection of cake-like recipes will appear for the person. Some apps that exist that incorporate similar functionality would be ShuffleChef, Tomaito, and SuperCook. Thus, the idea of this app is to try and create something simpler, quicker, and more accessible that provides those with a higher incentive to create more homecooked meals. 
 
 
-![Alt text]()
+![Alt text](my-app/public/images/rr-home-gen.png)
 
 ## Initial Setup
 
