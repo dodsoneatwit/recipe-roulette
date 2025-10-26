@@ -31,7 +31,7 @@ Install the latest version of Node.js here at [nodejs.org](https://nodejs.org/en
 
 ## Back-End
 
-### Running the Server With Next.js Application
+### Running the Server With Vue.js Application
 1. Change directory to /apis
 2. Execute command <b>npm i</b> to install dependencies
 2. Execute command <b>node server.js</b>
