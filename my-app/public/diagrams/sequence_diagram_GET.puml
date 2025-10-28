@@ -1,6 +1,5 @@
 @startuml recipe roulette retrieval
 
-
 actor User
 participant "Recipe Roulette App" as App
 participant "Salesforce Database" as Database

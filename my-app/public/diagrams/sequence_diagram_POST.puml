@@ -1,14 +1,52 @@
 @startuml recipe roulette insert
 
+skinparam backgroundColor #acacac
+
+skinparam sequence {
+    ActorBorderColor #000000
+
+    ArrowColor #ffffff
+    ActorBorderColor #ffffff
+    LifeLineBorderColor #ffffff
+    LifeLineBackgroundColor #ffffff
+
+    ParticipantBorderColor #000000
+    ParticipantBackgroundColor #f02502
+    ParticipantFontSize 17
+    ParticipantFontColor #ffffff
+
+    ActorBackgroundColor #ffffff
+    ActorFontSize 17
+    ActorFontName Aapex
+}
 
 actor User
 participant "Recipe Roulette App" as App
-participant "Salesforce Database" as Database
+participant "API Gateway" as APIGateway
+participant "AWS Lambda" as Lambda
+database "AWS RDS" as MySQL
 
-User -> App: Enters username and password
-User -> App: Submits account
-App -> Database: Send POST Request for account creation
-Database -> App: Send 200 Success response
-App -> User: Prompt User to app on their account
+User -> App: Executes API
+activate App
+
+App -> APIGateway: POST or GET request to API Gateway
+activate APIGateway
+
+APIGateway -> Lambda: Trigger event handler with corresponding function
+activate Lambda
+
+Lambda -> MySQL: Query to retrieve, insert, or delete (for accounts and recipes)
+
+MySQL -> Lambda: Query results (for Users or Saved_Recipes tables)
+deactivate MySQL
+
+Lambda -> APIGateway: Return success status, headers, and body with data
+deactivate Lambda
+
+APIGateway -> App: 200 status response
+deactivate APIGateway
+
+App -> User: Login/Signin user, display recipes, or update lists
+deactivate App
 
 @enduml

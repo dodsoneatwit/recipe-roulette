@@ -26,6 +26,24 @@
                                         <v-card-title class="mt-2 anta-regular title"> <b>{{ customList.getRecipeAtIndex((i - 1) * 2 + (j - 1))?.getTitle() }}</b></v-card-title>
                                     </v-col>
                                 </v-row>
+                                <v-row justify="center">
+                                    <v-col>
+                                        <center>
+                                            <v-btn class="addToList" @click="deleteRecipe(recipe)">
+                                                Delete
+                                                <v-icon class="">
+                                                <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
+                                                    <v-tooltip
+                                                        activator="parent"
+                                                        location="bottom"
+                                                    >
+                                                        Press button to delete recipe from custom list
+                                                    </v-tooltip>
+                                                </v-icon>
+                                            </v-btn>
+                                        </center>
+                                    </v-col>
+                                </v-row>
                                 <v-card-actions>
                                     <v-card-subtitle class="mt-2 anta-regular" >Description</v-card-subtitle>
                                     <v-btn
@@ -130,7 +148,7 @@ export default {
         this.initializeCustomlist()
     },
     mounted() {
-        // Setting data value to the value of the prop
+        // setting data value to the value of the prop
         this.tempList = this.propValue;
     },
     methods: {
@@ -149,6 +167,29 @@ export default {
             console.log('--RECIPES--',recipes)
             // title, id, imageUrl, instructions, description, restrictions
             this.customList.setRecipesList(recipes.map((recipe) => new Recipe(
+                recipe.title,
+                recipe.id,
+                recipe.image,
+                recipe.instructions,
+                recipe.description,
+                recipe.diets
+            )))
+        },
+        async deleteRecipe(recipe) {
+          console.log('--USER ID--',this.myAccount.id)
+          console.log('--RECIPE ID--',recipe.id)
+          const response = await fetch(`${this.api_url}/dev/api/delete_recipe_from_list`, {
+              method: "POST",
+              headers:    {
+                    'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                user_id: this.myAccount.id,
+                recipe_id: recipe.id
+              })
+          })
+          const result = await response.json()
+          this.customList.setRecipesList(result.recipes.map((recipe) => new Recipe(
                 recipe.title,
                 recipe.id,
                 recipe.image,

@@ -16,30 +16,27 @@ Install the latest version of Node.js here at [nodejs.org](https://nodejs.org/en
 
 ## Front-End Application
 
-![Alt text]()
-### Frontend and Backend Interaction Sequence
+### Starting Application Locally:
 
-### Starting the Server
-1. Switch directory to my-app
-2. Run <b>npm i</b> to install needed packages/libraries.
-3. Run <b>npm run dev</b> to start Vue.js app
-4. App should run on http://localhost:3000
+1. Change directory to recipe-roulette\my-app
+2. Execute command npm i or npm install to install required packages
+3. Execute command npm run dev to start client
+4. Navigate to URL http://localhost:3000/ to see application running
 
-### Tools/Resources Used for Frontend
+### Tools:
 
-<li>Font Awesome for supplying app with ready icons at [FontAwesome.com](https://fontawesome.com/icons)</li>
+<li>Vue.js: JavaScript framework for building dynamic and responsive interfaces and components [Vuejs.com](https://vuejs.org/)</li>
+<li>Vuetify: A Vue library that offers pre-designed Vue components [Vuetify.com](https://vuetifyjs.com/)</li>
 
-## Back-End
+## Frontend and Backend Interaction Sequence
 
-### Running the Server With Vue.js Application
-1. Change directory to /apis
-2. Execute command <b>npm i</b> to install dependencies
-2. Execute command <b>node server.js</b>
-3. Console should log hosted URL: http://localhost:5000
+![Alt text](my-app/public/diagrams/images%20developed/seq_diagram_standard_flow.png)
 
-### Tools/Resources Used for SSR (Server-Side Rendering)
+## Amazon Web Services: RDS, Lambda and API Gateway
 
-<li>Express.js to create and maintain server, develop and integrate APIs, and run code locally or external server [Express.js](https://expressjs.com/)</li>
+<li>RDS (Relational Database Service): created instance for MySQL database; database included tables for user accounts and a table for saved recipes</li>
+<li>Lambda: utilized to create serverless functions for handling external service API requests and querying to MySQL database</li>
+<li>API Gateway: allows user to access public API that triggers AWS lambda functions</li>
 
 ## Author
 
