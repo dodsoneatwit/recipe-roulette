@@ -155,8 +155,15 @@ import Generate from '../lib/Classes/Generate'
     },
     created: function () {
       this.retrieveRecipesInBulk();
+      this.tempfunc();
     },
     methods: {
+      tempfunc() {
+        const savedUser = localStorage.getItem('user')
+          if (savedUser) {
+            console.log('LOCAL SAVE TEST',JSON.parse(savedUser))
+          }
+      },
       async retrieveRecipesInBulk() {
           const response = await fetch(`${this.api_url}/dev/api/get_recipes_bulk`, {
                 method: "GET",

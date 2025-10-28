@@ -82,15 +82,6 @@
                     </v-row>
                 </div>
             </v-window>
-            <div class="text-center">
-                <v-btn
-                    class="mt-2 anta-regular" 
-                    type="submit" 
-                    ref="forceReload"
-                    @click="reloadPage()"
-                >Reload
-            </v-btn>
-            </div>
         </v-card>
     </div>
 </template>
@@ -142,7 +133,12 @@ export default {
         //     this.accounts = await this.retrieveAccounts()
         // },
         async checkLoginSignUp() {
-            console.log('--RETRIEVE ACCOUNTS HIT--')
+            console.log('--RETRIEVE ACCOUNTS HIT--', this.login)
+
+            if (!this.login && this.password !== this.re_enter_password) {
+                alert("Passwords do not match")
+                return;
+            }
             // account login or signin
             let result = await fetch(`${this.api_url}/dev/api/${this.login ? 'login_to_account' : 'create_account'}`, {
                 method: "POST",
@@ -177,6 +173,8 @@ export default {
                 validAccount: true,
                 account: this.account
             }
+            localStorage.setItem('user', JSON.stringify(this.account))
+            localStorage.setItem('validAccount', JSON.stringify({'valid': true}))
             this.$emit('send-sign-in-results', signInResults)
         },
         reloadPage() {

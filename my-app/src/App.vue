@@ -5,6 +5,7 @@
         <NavigationBar 
           @send-profile-clicked="profileIsClicked($event)"
           @send-custom-list-clicked="customListIsClicked($event)"
+          @user-logged-out="handleLogout"
           :my-account="account"
         />
         <v-tabs 
@@ -14,30 +15,14 @@
           fixed-tabs
           align-tabs="center"
         >
-          <v-tab value="generate" class="anta-regular">Generate</v-tab>
-          <v-tab value="gallery" class="anta-regular">Gallery</v-tab>
-          <v-tab value="explore" class="anta-regular">Explore</v-tab>
+          <v-tab value="/generation" :to="'/generation'" tag="router-link" class="anta-regular">Generate</v-tab>
+          <v-tab value="/gallery" :to="'/gallery'" tag="router-link" class="anta-regular">Gallery</v-tab>
+          <v-tab value="/explore" :to="'/explore'" tag="router-link" class="anta-regular">Explore</v-tab>
         </v-tabs>
-        <v-window v-model="tab">
-          <template v-if="tab == 'gallery'">
-            <Gallery 
-              @update-my-custom-recipes="updateMyCustomList($event)"
-              :my-account="account"
-            />
-          </template>
-          <template v-if="tab == 'generate'">
-            <Generation 
-              @update-my-custom-recipes="updateMyCustomList($event)"
-              :my-account="account"
-            />
-          </template>
-          <template v-if="tab == 'explore'">
-            <Explore
-              @update-my-custom-recipes="updateMyCustomList($event)"
-              :my-account="account"
-            />
-          </template>
-        </v-window>
+        <router-view
+          @update-my-custom-recipes="updateMyCustomList($event)"
+          :my-account="account"
+        />
       </v-card>
       <Profile
         v-if="profileClicked"
@@ -62,6 +47,9 @@
 </template>
 
 <script>
+import { reactive, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 import NavigationBar from "./components/NavigationBar.vue";
 import Generation from "./components/Generation.vue";
 import Gallery from "./components/Gallery.vue";
@@ -89,6 +77,50 @@ export default {
     Profile,
     CustomList
   },
+  setup(_, { expose }) {
+    // instantiating routing
+    const route = useRoute()
+    const router = useRouter()
+
+    const state = reactive({ tab: route.path })
+
+    watch(
+      () => route.path,
+      (newPath) => {
+        if (['/generation', '/gallery', '/explore'].includes(newPath)) {
+          state.tab = newPath
+        }
+      },
+      { immediate: true }
+    )
+
+    expose({ state })
+    return { route, router, state }
+  },
+  created() {
+    const user = localStorage.getItem('user')
+    const valid = localStorage.getItem('validAccount')
+
+    if (user && valid) {
+      console.log('User logged in:', JSON.parse(user))
+      console.log('Valid account:', JSON.parse(valid))
+
+      this.account = JSON.parse(user)
+      this.isSignedIn = JSON.parse(valid).valid
+    }
+  },
+  computed: {
+    tab: {
+      get() {
+        return this.state.tab
+      },
+      set(value) {
+        // trigger navigation routing
+        this.$router.push(value)
+        this.state.tab = value
+      }
+    }
+  },
   methods: {
     updateSignInValue(value) {
       this.isSignedIn = value.validAccount;
@@ -102,6 +134,12 @@ export default {
     },
     updateMyCustomList(updatedList) {
       this.myList = updatedList
+    },
+    handleLogout() {
+      this.isSignedIn = false
+      this.account = null
+      this.profileClicked = false
+      this.customListClicked = false
     }
   }
 };

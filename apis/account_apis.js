@@ -91,7 +91,7 @@ export const handler = async (event) => {
             // grabs ID of insertion and queries it for response
             const insertId = result.insertId;
             const [user] = await connection.execute(
-                'SELECT * FROM Users WHERE id = ?', [insertId]
+                'SELECT * FROM Users WHERE user_id = ?', [insertId]
             );
             await connection.end();
 

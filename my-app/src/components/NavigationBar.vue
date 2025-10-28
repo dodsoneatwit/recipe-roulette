@@ -34,6 +34,9 @@
           <v-list-item @click="sendCustomListClicked()" prepend-icon="mdi-square-edit-outline" value="custom-list">
             <span class="drawer-titles anta-regular">Custom List</span>
           </v-list-item>
+          <v-list-item @click="logout()" value="custom-list">
+            <span class="drawer-titles anta-regular">Log Out</span>
+          </v-list-item>
         </v-list>
     </v-navigation-drawer>
   </div>
@@ -57,6 +60,13 @@ export default {
     this.accountName = this.myAccount.username
   },
   methods: {
+    logout() {
+        if (confirm('Are you sure you want to log out?')) {
+          localStorage.clear()
+          this.$emit('user-logged-out')
+          this.$router.push('/generation')
+        }
+    },
     sendProfileClicked() {
       this.$emit('send-profile-clicked', true)
     },
