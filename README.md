@@ -36,7 +36,7 @@ Install the latest version of Node.js here at [nodejs.org](https://nodejs.org/en
 
 <li>RDS (Relational Database Service): created instance for MySQL database; database included tables for user accounts and a table for saved recipes</li>
 <li>Lambda: utilized to create serverless functions for handling external service API requests and querying to MySQL database</li>
-<li>API Gateway: allows user to access public API that triggers AWS lambda functions</li>
+<li>API Gateway: allows user to create public APIs that triggers AWS lambda functions</li>
 
 ## Author
 
