@@ -25,8 +25,8 @@ Install the latest version of Node.js here at [nodejs.org](https://nodejs.org/en
 
 ### Tools:
 
-<li>Vue.js: JavaScript framework for building dynamic and responsive interfaces and components [Vuejs.com](https://vuejs.org/)</li>
-<li>Vuetify: A Vue library that offers pre-designed Vue components [Vuetify.com](https://vuetifyjs.com/)</li>
+<li>Vue.js: JavaScript framework for building dynamic and responsive interfaces and components (https://vuejs.org/)</li>
+<li>Vuetify: A Vue library that offers pre-designed Vue components (https://vuetifyjs.com/)</li>
 
 ## Frontend and Backend Interaction Sequence
 
