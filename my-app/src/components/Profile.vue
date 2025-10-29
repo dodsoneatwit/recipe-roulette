@@ -58,7 +58,7 @@ export default {
     margin-top: 3%;
     margin-left: 15%;
     margin-right: 15%;
-    background-color: lightgreen
+    background-color: rgb(255, 255, 255)
 }
 .exit {
     margin-top:0;

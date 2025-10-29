@@ -21,6 +21,7 @@
         </v-tabs>
         <router-view
           @update-my-custom-recipes="updateMyCustomList($event)"
+          @update-account="updateAccount($event)"
           :my-account="account"
         />
       </v-card>
@@ -36,6 +37,7 @@
         :username="account.username"
         :password="account.password"
         :my-account="account"
+        @update-account="updateAccount($event)"
         @exit-custom-list="customListIsClicked($event)" 
       />
       <SignIn
@@ -134,6 +136,11 @@ export default {
     },
     updateMyCustomList(updatedList) {
       this.myList = updatedList
+    },
+    updateAccount(updatedAccount) {
+      this.account = updatedAccount;
+      localStorage.setItem('user', JSON.stringify(this.account));
+      console.log('Updated account:', this.account);
     },
     handleLogout() {
       this.isSignedIn = false

@@ -1,62 +1,60 @@
 <template>
     <div class="container">
-      <v-container>
-        <v-row justify="center">
+      <v-container fluid>
+        <v-row v-if="loading" justify="center" dense>
+          <v-col v-for="i in maxGenerations" :key="i">
+            <v-skeleton-loader
+              class="mx-auto border"
+              max-width="500"
+              type="card-avatar, actions"
+            ></v-skeleton-loader>
+          </v-col>
+        </v-row>
+        <v-row v-if="!loading" justify="center" dense>
           <v-col v-for="(recipe, i) in chosenRecipes" :key="i" cols="12" sm="10" md="6" lg="4">
             <v-card max-width="500" elevation="6" class="recipe">
               <div v-if="fetched">
                 <center><img :src="recipe?.image" alt="Recipe Image"></center>
                 <v-row>
                   <v-col>
-                    <v-card-title class="mt-2 anta-regular"> 
+                    <v-card-title class="mt-2 anta-regular title"> 
                       {{ recipe?.title !== undefined && recipe?.title !== null ? recipe?.title : '' }}
                     </v-card-title>
                   </v-col>
                 </v-row>
-                <v-row justify="center">
-                  <v-col>
-                    <center>
-                      <v-btn class="addToList" @click="updateMyRecipes(recipe)">
-                        Add To Custom List
-                        <v-icon class="">
-                          <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
-                            <v-tooltip
-                                activator="parent"
-                                location="bottom"
-                            >
-                                Press button to add recipe to your unique custom list
-                            </v-tooltip>
-                        </v-icon>
-                    </v-btn>
-                    </center>
-                  </v-col>
-                </v-row>
                 <v-card-actions>
-                    <v-card-subtitle class="mt-2 anta-regular">Description</v-card-subtitle>
+                    <v-card-subtitle class="mt-2 anta-regular">Info</v-card-subtitle>
                     <v-btn
-                        :icon="showDescription ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                        @click="showDescription = !showDescription"
-                    ></v-btn>
-                    <v-spacer/>
-                    <v-card-subtitle class="mt-2 anta-regular" >Instructions</v-card-subtitle>
-                    <v-btn
-                        :icon="showIngredients ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                        @click="showIngredients = !showIngredients"
+                        :icon="showDescription[i] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                        @click="showDescription[i]  = !showDescription[i] "
+                        style="margin-left:65%"
                     ></v-btn>
                 </v-card-actions>
                 <v-expand-transition>
-                    <div v-if="showDescription">
-                        <v-divider></v-divider>
-
-                        <v-card-text class="mt-2 anta-regular">
-                            {{ removeHtmlTags(recipe?.summary) }}
-                            <v-row :id="diet" class="diet">
+                    <div v-if="showDescription[i] ">
+                        <v-expansion-panels  elevation="0">
+                            <v-expansion-panel
+                                elevation="0"
+                                title="Description"
+                                :text="removeHtmlTags(recipe?.summary)"
+                                class="mt-2 anta-regular small-text"
+                            >
+                            </v-expansion-panel>
+                            <v-expansion-panel
+                                elevation="0"
+                                title="Instructions"
+                                :text="removeHtmlTags(recipe?.instructions)"
+                                class="mt-2 anta-regular small-text"
+                            >
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                        <v-row :id="diet" class="diet" justify="center">
                                 <div v-if="recipe?.vegetarian" class="diet-icons" v:on:mouseover="showVegetarian">
                                     <v-icon>
                                         <i class="fa-solid fa-leaf fa-xl" style="color: #51e1aa;"></i>
                                         <v-tooltip
-                                          activator="parent"
-                                          location="bottom"
+                                        activator="parent"
+                                        location="bottom"
                                         >
                                         Vegetarian
                                         </v-tooltip>
@@ -66,8 +64,8 @@
                                     <v-icon>
                                         <i class="fa-solid fa-carrot fa-xl" style="color: #f0a53d;"></i>
                                         <v-tooltip
-                                          activator="parent"
-                                          location="bottom"
+                                        activator="parent"
+                                        location="bottom"
                                         >
                                         Vegan
                                         </v-tooltip>
@@ -77,24 +75,28 @@
                                     <v-icon>
                                         <i class="fa-solid fa-wheat-awn-circle-exclamation fa-xl" style="color: #51bff6;"></i>
                                         <v-tooltip
-                                          activator="parent"
-                                          location="bottom"
+                                        activator="parent"
+                                        location="bottom"
                                         >
                                         Gluten Free
                                         </v-tooltip>
                                     </v-icon>                                                
                                 </div>
-                            </v-row>
-                        </v-card-text>
-                    </div>
-                </v-expand-transition>
-                <v-expand-transition>
-                    <div v-if="showIngredients">
-                        <v-divider></v-divider>
-
-                        <v-card-text class="mt-2 anta-regular" >
-                            {{ removeHtmlTags(recipe?.instructions) }}
-                        </v-card-text>
+                        </v-row>
+                        <v-row justify="center">
+                            <v-btn size="small" class="addToList" @click="updateMyRecipes(recipe)">
+                                Add To Custom List
+                                <v-icon class="">
+                                    <i class="fa-solid fa-plus" style="color: #0787e9;"></i>
+                                    <v-tooltip
+                                        activator="parent"
+                                        location="bottom"
+                                    >
+                                        Press button to add recipe to your unique custom list
+                                    </v-tooltip>
+                                </v-icon>
+                            </v-btn>
+                        </v-row>
                     </div>
                 </v-expand-transition>
               </div>
@@ -136,15 +138,15 @@ import Generate from '../lib/Classes/Generate'
       itemsAdded: 0,
       generateBtn: 'Generate',
       saveBtn: 'Save',
-      range: 1,
-      maxGenerations: 4,
+      range: 3,
+      maxGenerations: 3,
       fetched: false,
       recipes: [],
+      loading: true,
       chosenRecipes: [],
       myList: new CustomUserList(),
       randomNum: 0,
-      showDescription: false,
-      showIngredients: false
+      showDescription: []
     }),
     props: {
       myAccount: {
@@ -175,8 +177,9 @@ import Generate from '../lib/Classes/Generate'
           const result = await response.json(); // Parse JSON response
           console.log('--RECIPES DATA--',result)
           this.recipes = new Generate(result.recipes); // Update component data
-          this.chosenRecipes[0] = this.recipes.generateRandomRecipe()
+          this.getRandomRecipe()
           this.fetched = true;
+          this.loading = false;
       },
       getRandomRecipe() {
         this.chosenRecipes = []
@@ -202,20 +205,29 @@ import Generate from '../lib/Classes/Generate'
           })
 
           const result = await response.json()
-          this.myList.setRecipesList(result.recipes)
-
-          // this.$emit('update-my-custom-recipes', this.myList)
+          this.$emit('update-account',{ ...this.myAccount, recipe_ids: [...result.recipes]})
       }
     }
   }
   //
   </script>
   <style scoped>
+    .title {
+      font-size: .75rem
+    }
+    .small-text {
+      font-size:.6rem;
+      color:black;
+    }
+    .med-text {
+      font-size:.75rem;
+      color:black;
+    }
     .container {
-        height: 150rem;
-        margin-top: 7%;
+        margin-top: .5rem;
         margin-left: 7.5%;
         margin-right: 7.5%;
+        margin-bottom: 5%;
     }
     .slider{
       font-size: 5.0rem
@@ -230,13 +242,15 @@ import Generate from '../lib/Classes/Generate'
     }
     .diet-icons {
         margin-left: 1rem;
-        margin: 1rem
+        margin: 1rem;
     }
     .diet {
-        margin-top:1rem;
+        margin-top:.5rem;
     }
     .addToList {
-      margin-bottom:1rem
+      margin-bottom:2rem;
+      font-size:.6rem;
+      padding: 0.5rem;
     }
   </style>
   

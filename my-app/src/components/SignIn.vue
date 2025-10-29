@@ -81,14 +81,20 @@
                         </v-btn>
                     </v-row>
                 </div>
+                <v-alert
+                    v-if="showAlert"
+                    :type="alert_type"
+                    closable
+                    class="mt-2 anta-regular"
+                >
+                    {{  alert_message  }}
+                </v-alert>
             </v-window>
         </v-card>
     </div>
 </template>
 
 <script >
-import { reactive } from 'vue';
-import Account from "../lib/Classes/Account"
 
 export default {
     name: 'SignIn',
@@ -101,6 +107,9 @@ export default {
         account: null,
         login: true,
         validAccount: false,
+        showAlert: false,
+        alert_message: '',
+        alert_type: null,
         test: [],
         rules: {
             required: value => !!value || 'This field is required',
@@ -113,6 +122,13 @@ export default {
             if (newAccount) {
                 console.log('--ACCOUNT--',newAccount)
                 this.sendSignInResults();
+            }
+        },
+        showAlert(val) {
+            if (val) {
+                setTimeout(() => {
+                    showAlert = false
+                }, 3000) // removes alert after 3 seconds
             }
         }
     },
@@ -136,7 +152,10 @@ export default {
             console.log('--RETRIEVE ACCOUNTS HIT--', this.login)
 
             if (!this.login && this.password !== this.re_enter_password) {
-                alert("Passwords do not match")
+                this.alertTrigger("Invalid... passwords must be matching!", "error")
+                return;
+            } else if (this.username.length < 6 || this.password.length < 6) {
+                this.alertTrigger("Invalid: username and/or password lengths are too short!", "error")
                 return;
             }
             // account login or signin
@@ -160,12 +179,16 @@ export default {
                     password: data.user.password,
                     recipe_ids: this.login ? data.user.savedRecipes : []
                 }
-                alert(`Success: ${data.message}`)
-                // this.sendSignInResults()
+                this.alertTrigger(`Success: ${data.message}`, "success")
             } else {
-                alert(`Error: ${data.message}`)
+                this.alertTrigger(`Error: ${data.message}`, "error")
             }
 
+        },
+        alertTrigger(message, type) {
+            this.showAlert = true
+            this.alert_message = message
+            this.alert_type = type
         },
         async sendSignInResults() {
             // send sign-in results to component
@@ -231,6 +254,7 @@ export default {
         font-family: "Anta", sans-serif;
         font-weight: 400;
         font-style: normal;
+        font-size: 1rem;
     }
     .reload {
         left: 22.2rem
