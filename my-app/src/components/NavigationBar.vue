@@ -1,23 +1,16 @@
 <template>
   <div>
-    <v-toolbar color='red' dark>
-      <v-row>
-        <v-col cols="2">
-        </v-col>
-        <v-col class="d-flex justify-space-around">
-          <v-toolbar-title class="flex text-center mt-3">
-            <span class="title anta-regular">{{ title }}</span>
-          </v-toolbar-title>
-        </v-col>
-        <v-col cols="2" class="d-flex justify-end">
-          <v-btn 
-           icon
-           @click.stop="openHamburgerButton = !openHamburgerButton"
-          >
-            <v-icon class="icons">mdi-menu</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
+    <v-toolbar color='red' dark dense>
+      <v-toolbar-title class="text-center mx-auto anta-regular title">
+        <span class="title anta-regular">{{ title }}</span>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn 
+        icon
+        @click.stop="openHamburgerButton = !openHamburgerButton"
+      >
+        <v-icon class="icons">mdi-menu</v-icon>
+      </v-btn>
     </v-toolbar>
     <v-navigation-drawer
         v-model="openHamburgerButton"
@@ -79,9 +72,15 @@ export default {
 </script>
 <style scoped>
   .title {
-    font-size: 2.5rem;
+    font-size: 2.0rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    margin-bottom:1rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    margin-top: 100%;
   }
 
   .anta-regular {
